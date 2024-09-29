@@ -1,0 +1,77 @@
+﻿@page "/OrgFile/Upload"
+@using my_orange_easyxls.DTO
+@using my_orange_easyxls.Service
+@using my_orange_easyxls.Pages.Component;
+@inject NavigationManager nv
+@using Radzen
+@using Radzen.Blazor
+@inject OrgFileService mService
+@inject DialogService dlg
+<PageTitle>上传文件</PageTitle>
+<RadzenDialog></RadzenDialog>
+<div class="container mt-5">
+    <h2>上传您的Excel文件</h2>
+    <div class="mb-3">
+        <label for="projectInfo" class="form-label"></label>    
+        <FileUpload  OnUploadFinished="HandleFileUploadEvent"></FileUpload>
+    </div>
+    <!-- 文件上传组件  -->
+   
+    <div class="mb-3">
+     </div>
+  
+    <button  class="btn btn-primary" @onclick="SaveData">保存</button>
+
+
+</div>
+
+
+
+
+@code {
+
+
+
+    //private Project_documentDTO p = new Project_documentDTO();
+    private String ErrorInfo = "";
+
+    [Parameter]
+    public int Id { get; set; }
+    private String ErrorDisplay = "none";
+    private int ProjectId;
+    private List<FileDTO> lstFiles = new List<FileDTO>();
+    //private List<ProjectDTO> Projects;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+    }
+
+    private void HandleFileUploadEvent(List<FileDTO> _lstFiles)
+    {
+        this.lstFiles = _lstFiles;
+        // 处理来自子组件的数据
+    }
+
+
+
+    private async Task SaveData()
+    {
+
+        var blnSave = await mService.Save(this.lstFiles);
+        var info = blnSave ? "上传成功" : "上传失败";
+        await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
+        nv.NavigateTo("List");
+
+
+
+
+    }
+
+
+
+
+
+}

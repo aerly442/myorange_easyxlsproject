@@ -1,0 +1,89 @@
+﻿@using my_orange_easyxls.Service
+@using my_orange_easyxls.DTO
+
+@inject IWebHostEnvironment Environment
+@inject FileUploadService fileUploadService
+
+<div class="mb-3">
+    <label for="projectIntro" class="form-label">上传文件</label>
+    <InputFile OnChange="LoadFiles" multiple />
+
+</div>
+<div class="mb-3">
+    @if (isLoading)
+    {
+        <p>进度: @string.Format("{0:P0}", progressPercent)</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var file in loadedFiles)
+            {
+                <li>文件名: @file.Name 文件上传成功！</li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+
+    private List<IBrowserFile> loadedFiles = new();
+    private long maxFileSize = 1024 * 1024 * 1000;
+    private int maxAllowedFiles = 10;
+    private bool isLoading;
+    private decimal progressPercent;
+
+    //[Parameter]
+    //public string FileName { get; set; } = "";
+
+
+    [Parameter]
+    public EventCallback<List<FileDTO>> OnUploadFinished { get; set; }
+
+
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        loadedFiles.Clear();
+        progressPercent = 0;
+        List<FileDTO> lstFiles = new List<FileDTO>();
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            string extName = fileUploadService.GetExtName(file.Name);
+            string aFileName = fileUploadService.GetFileName() + extName;
+            string relativePath = fileUploadService.GetFilePath() + "/" + aFileName; // 相对路径
+            string filePath = Environment.WebRootPath + relativePath; // 获取绝对路径
+
+            var path = filePath;//Path.Combine(Environment.ContentRootPath, "upload", aFileName);
+
+            await using FileStream writeStream = new(path, FileMode.Create);
+            using var readStream = file.OpenReadStream(maxFileSize);
+            var bytesRead = 0;
+            var totalRead = 0;
+            var buffer = new byte[1024 * 10];
+
+            while ((bytesRead = await readStream.ReadAsync(buffer)) != 0)
+            {
+                totalRead += bytesRead;
+                await writeStream.WriteAsync(buffer, 0, bytesRead);
+                progressPercent = Decimal.Divide(totalRead, file.Size);
+                StateHasChanged();
+            }
+
+            loadedFiles.Add(file);
+            lstFiles.Add(new FileDTO()
+                {
+                    Filename = file.Name,
+                    FileUrl = relativePath
+                });
+
+
+        }
+        //this.FileName = "abd.jpg";
+        await OnUploadFinished.InvokeAsync(lstFiles);
+        isLoading = false;
+    }
+
+}
