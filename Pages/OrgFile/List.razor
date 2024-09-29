@@ -1,0 +1,180 @@
+﻿@page "/OrgFile/List"
+@using my_orange_easyxls.DTO
+@using my_orange_easyxls.Service
+@using my_orange_easyxls.Models
+@inject OrgFileService mService
+@attribute [Authorize(Roles = "Admin, User")]
+@inject NavigationManager nv
+@using Microsoft.AspNetCore.Components.Web
+@inject DialogService dlg
+<RadzenDialog></RadzenDialog>
+<div class="container">
+    <div class="row" style="padding-bottom:30px">
+        <div class="col-md-5">
+            <h4>文件列表</h4>
+        </div>
+        <div class="col-md-5 text-end"></div>
+    </div>
+
+    <div class="row" style="padding-bottom:30px">
+        <div class="col-md-1">
+            <!-- 第一列：仅文本，实际使用时可能需要将其包装在适当的标签中，如<label> -->
+            <p class="mb-0">请选择</p>
+        </div>
+        <div class="col-md-3">
+            <!-- 第二列：下拉选择框 -->
+            <select class="form-control" @bind="searchDTO.FieldName">
+                <option selected value="filename">文件名</option>
+               
+
+            </select>
+        </div>
+        <div class="col-md-4">
+            <!-- 第三列：文本框 -->
+            <input type="text" class="form-control" @bind="searchDTO.SearchValue" placeholder="请输入搜索内容">
+        </div>
+        <div class="col-md-2">
+            <!-- 最后一列：搜索按钮 -->
+            <button class="btn btn-primary btn-block" @onclick="SearchData">搜索</button>
+
+        </div>
+        <div class="col-md-2 text-center">
+
+            <a href="OrgFile/Upload" class="btn btn-success">上传</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">编号</th>
+                    <th scope="col">文件名</th>
+                    <th scope="col">文件地址</th>
+                    <th scope="col">上传时间</th>
+                    <th scope="col">状态</th>
+                    <th scope="col" style="width:150px">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (lst != null)
+                {
+                    @foreach (var item in lst)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Filename</td>
+
+                            <td>
+                                
+                                    @item.FileUrl
+                               
+
+                            </td>
+                            <td>
+                                @item.Createtime.ToString("yyyy-MM-dd")
+                            </td>
+
+                            <td>@(item.State == 1 ? "新建" : "")</td>
+                            <td>
+
+
+
+
+                                <button @onclick="@(() => showDeleteDlg(item.Id))" class="btn btn-danger bt" data-bs-toggle="modal"
+                                        data-bs-target="#myModal">
+                                    删除
+                                </button>
+
+
+
+                            </td>
+                        </tr>
+                    }
+                }
+
+
+
+
+                <!-- 你可以继续添加更多的行 -->
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-between mt-3">
+        <div>
+            <span>总数: @(TotalCount)</span>
+
+        </div>
+        <RadzenPager ShowPagingSummary="true" 
+              PagingSummaryFormat="@("")"
+              HorizontalAlign="HorizontalAlign.Right"
+                     Count="TotalCount" PageSize="@pageSize"
+                     PageNumbersCount="5" 
+              PageChanged="@PageChanged" />
+        
+    </div>
+
+
+</div>
+
+ 
+
+@code {
+
+    private List<Org_fileDTO> lst;
+    private SearchDTO searchDTO = new SearchDTO() { FieldName = "filename", SearchValue = "" };
+    private String PageHtml = "";
+    private int TotalCount = 0;
+
+    //string pagingSummaryFormat = "";
+    int    pageSize            = MyPage.PageSize;
+    //int count;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetData(1);
+        //.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+    }
+
+    private async Task GetData(int pageIndex)
+    {
+        var searchResultDTO = await mService.GetList(searchDTO, pageIndex);
+        lst                 = searchResultDTO.Data;       
+        TotalCount          = searchResultDTO.TotalCount;
+    }
+
+    private async Task SearchData()
+    {
+        await GetData(1);
+
+    }
+
+    private async Task PageChanged(PagerEventArgs args)
+    {
+        await GetData(args.PageIndex + 1);
+    }
+
+    private bool showDeleteModal = false;
+    private int mId = 0;
+
+    /// <summary>
+    /// 设置项目ID
+    /// </summary>
+    /// <param name="id"></param>
+    private async Task showDeleteDlg(int id)
+    {
+        this.mId = id;
+        var dlgResult = await dlg.Confirm("您确定要删除吗?", "提示", new ConfirmOptions() { OkButtonText = "确定", CancelButtonText = "取消" });
+        if ((bool)dlgResult)
+        {
+
+            var blnDelete = await mService.Delete(new Org_fileDTO() { Id = this.mId });
+            var info = blnDelete ? "删除成功" : "删除失败";
+            await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
+            StateHasChanged();
+            
+        }
+    }
+
+ 
+
+}
