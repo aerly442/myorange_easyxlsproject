@@ -16,7 +16,8 @@ namespace my_orange_easyxls.Data
         }
 
         public DbSet<my_orange_easyxls.Models.Org_file> OrgFile { get; set; } = default!;
-
+        public DbSet<my_orange_easyxls.Models.Org_field> OrgField { get; set; } = default!;
+        public DbSet<my_orange_easyxls.Models.Org_data> OrgData { get; set; } = default!;
 
         // public DbSet<myorange_pmproject.Models.Manager> Manager { get; set; } = default!;
 

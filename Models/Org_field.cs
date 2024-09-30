@@ -1,5 +1,9 @@
-﻿namespace my_orange_easyxls.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace my_orange_easyxls.Models
 {
+    [Table("Org_field")]
     public class Org_field
     {
         public int Id { get; set; } // SQLite中的INTEGER PRIMARY KEY AUTOINCREMENT  

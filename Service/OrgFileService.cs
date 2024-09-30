@@ -15,13 +15,22 @@ namespace my_orange_easyxls.Service
 
         private readonly MyOrangePMPProjectContext _context;
         private readonly ILogger<OrgFileService> _logger;
+        private readonly OrgFieldService _orgFieldService;
+        private readonly OrgDataService _orgDataService;
+        private readonly XlsFileService _xlsFileService;
         
-        public OrgFileService(MyOrangePMPProjectContext context, ILogger<OrgFileService> logger
+        public OrgFileService(MyOrangePMPProjectContext context, ILogger<OrgFileService> logger,
+                OrgFieldService orgFieldService,
+                XlsFileService xlsFileService,
+                OrgDataService orgDataService
             )
         {
 
             _context = context;
             _logger = logger;
+            _orgFieldService = orgFieldService ;
+            _xlsFileService =  xlsFileService;
+            _orgDataService = orgDataService ;
             
         }
 
@@ -72,6 +81,31 @@ namespace my_orange_easyxls.Service
 
             await _context.SaveChangesAsync();
             return true;
+        }
+
+
+                /// <summary>
+        /// 删除
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public async Task<bool> Import(Org_fileDTO p)
+        {
+             //01 先保存字段和名称
+             var lst      = _xlsFileService.GetOrgFieldByFile(p);
+             bool blnSave = await _orgFieldService.Save(lst);
+
+             //002 保存xls数据
+             if (blnSave == true ){
+
+                  var lstOrgData      = _xlsFileService.GetOrgDataByFile(p,0,0);                 
+                  await _orgDataService.Save(lstOrgData);
+
+             }
+          
+
+             return true;
+
         }
 
         /// <summary>

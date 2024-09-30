@@ -28,9 +28,9 @@ builder.Services.AddDbContext<MyOrangePMPProjectContext>(options =>
  
 
 builder.Services.AddScoped<OrgFileService>();
-//builder.Services.AddScoped<DialogService>();
-//builder.Services.AddScoped<RequestService>();
-//builder.Services.AddScoped<DocumentService>();
+builder.Services.AddScoped<OrgFieldService>();
+builder.Services.AddScoped<XlsFileService>();
+builder.Services.AddScoped<OrgDataService>();
 
 ////builder.Services.AddScoped<CurrentUserService>();
 

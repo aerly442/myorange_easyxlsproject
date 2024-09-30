@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace my_orange_easyxls.Models
 {
 
-    [Table("Org_file")]
+    [Table("org_file")]
     public class Org_file
      {
             public int Id { get; set; } // SQLite中的INTEGER PRIMARY KEY AUTOINCREMENT  

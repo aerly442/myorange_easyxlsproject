@@ -1,8 +1,8 @@
-﻿@page "/OrgFile/List"
+@page "/OrgField/List"
 @using my_orange_easyxls.DTO
 @using my_orange_easyxls.Service
 @using my_orange_easyxls.Models
-@inject OrgFileService mService
+@inject OrgFieldService mService
 @attribute [Authorize(Roles = "Admin, User")]
 @inject NavigationManager nv
 @using Microsoft.AspNetCore.Components.Web
@@ -11,8 +11,7 @@
 <div class="container">
     <div class="row" style="padding-bottom:30px">
         <div class="col-md-5">
-            <h4>文件列表</h4>
-            
+            <h4>字段列表</h4>
         </div>
         <div class="col-md-5 text-end"></div>
     </div>
@@ -25,7 +24,7 @@
         <div class="col-md-3">
             <!-- 第二列：下拉选择框 -->
             <select class="form-control" @bind="searchDTO.FieldName">
-                <option selected value="filename">文件名</option>
+                <option selected value="fieldname">字段名</option>
                
 
             </select>
@@ -49,9 +48,12 @@
             <thead>
                 <tr>
                     <th scope="col">编号</th>
-                    <th scope="col">文件名</th>
-                    <th scope="col">文件地址</th>
-                    <th scope="col">上传时间</th>
+                    <th scope="col">序号</th>
+                    <th scope="col">字段名</th>
+                    <th scope="col">文件Id</th>
+                    <th scope="col">数据名</th>
+                     <th scope="col">数据描述</th>
+                     <th scope="col">创建时间</th>
                     <th scope="col">状态</th>
                     <th scope="col" style="width:150px">操作</th>
                 </tr>
@@ -63,14 +65,11 @@
                     {
                         <tr>
                             <td>@item.Id</td>
-                            <td>@item.Filename</td>
-
-                            <td>
-                                
-                                    @item.FileUrl
-                               
-
-                            </td>
+                            <td>@item.Fieldnum</td>
+                            <td> @item.Fieldname</td>
+                            <td> @item.Org_fileid</td>
+                            <td> @item.Dataname</td>
+                            <td> @item.Datadesc</td>
                             <td>
                                 @item.Createtime.ToString("yyyy-MM-dd")
                             </td>
@@ -80,10 +79,7 @@
 
 
 
-                                <button @onclick="@(() => showImportDlg(item))" class="btn btn-success bt">
-                                    导入
-                                </button>
-                                &nbsp;
+                               
                                 <button @onclick="@(() => showDeleteDlg(item.Id))" class="btn btn-danger bt">
                                     删除
                                 </button>
@@ -123,18 +119,17 @@
 
 @code {
 
-    private List<Org_fileDTO> lst;
+    private List<Org_fieldDTO> lst;
     private SearchDTO searchDTO = new SearchDTO() { FieldName = "filename", SearchValue = "" };
     private String PageHtml = "";
     private int TotalCount = 0;
 
     //string pagingSummaryFormat = "";
     int    pageSize            = MyPage.PageSize;
- 
+    //int count;
 
     protected override async Task OnInitializedAsync()
     {
-   
         await GetData(1);
         //.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
     }
@@ -171,28 +166,14 @@
         if ((bool)dlgResult)
         {
 
-            var blnDelete = await mService.Delete(new Org_fileDTO() { Id = this.mId });
+            var blnDelete = await mService.Delete(new Org_fieldDTO() { Id = this.mId });
             var info = blnDelete ? "删除成功" : "删除失败";
             await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
             StateHasChanged();
             
         }
     }
-
-    private async Task showImportDlg(Org_fileDTO item)
-    {
-        this.mId = item.Id;
-        var dlgResult = await dlg.Confirm("您确定要导入吗?", "提示", new ConfirmOptions() { OkButtonText = "确定", CancelButtonText = "取消" });
-        if ((bool)dlgResult)
-        {
-
-            var blnImport= await mService.Import(item);
-            var info = blnImport ? "导入成功" : "导入失败";
-            await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
-            StateHasChanged();
-            
-        }
-    }
+ 
 
 
  

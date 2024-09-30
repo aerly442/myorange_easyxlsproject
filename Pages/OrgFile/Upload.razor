@@ -63,7 +63,7 @@
         var blnSave = await mService.Save(this.lstFiles);
         var info = blnSave ? "上传成功" : "上传失败";
         await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
-        nv.NavigateTo("List");
+        nv.NavigateTo("/OrgFile/List");
 
 
 

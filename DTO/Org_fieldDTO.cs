@@ -2,8 +2,7 @@
 {
     public class Org_fieldDTO
     {
-        public class Org_field
-        {
+        
             public int Id { get; set; } // SQLite中的INTEGER PRIMARY KEY AUTOINCREMENT  
             public int Fieldnum { get; set; } // SQLite中的TEXT NOT NULL  
             public string Fieldname { get; set; } // SQLite中的TEXT NOT NULL  
@@ -12,6 +11,6 @@
             public string Datadesc { get; set; }
             public DateTime Createtime { get; set; } // SQLite中的TIMESTAMP DEFAULT CURRENT_TIMESTAMP，在C#中通常使用DateTime  
             public int State { get; set; } // SQLite中的TEXT CHECK(state IN ('active', 'inactive', 'deleted')) NOT NULL  
-        }
+         
     }
 }
