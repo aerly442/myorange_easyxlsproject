@@ -170,7 +170,24 @@ namespace my_orange_easyxls.Service
 
         }
 
+        public async Task<bool> DeleteAll()
+        {
+            await _context.Database.ExecuteSqlRawAsync("delete from org_field");
+            return true;
+        }
 
+        public async Task<List<string>> GetDatadesc()
+        {
+            List<string> lst = await _context.OrgData.Select(x => x.Datadesc).Distinct().ToListAsync();
+            return lst;
+
+        }
+        public async Task<List<string>> GetDataname(string dataDesc)
+        {
+            List<string> lst = await _context.OrgData.Where(x=>x.Datadesc==dataDesc).Select(x => x.Dataname).Distinct().ToListAsync();
+            return lst;
+
+        }
 
     }
 }

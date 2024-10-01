@@ -209,6 +209,12 @@ namespace my_orange_easyxls.Service
 
         }
 
+        public async Task<bool> DeleteAll()
+        {
+            await _context.Database.ExecuteSqlRawAsync("delete from org_file");
+            return true;
+        }
+
 
 
     }

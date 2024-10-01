@@ -47,8 +47,12 @@ namespace my_orange_easyxls.Service
             {
                 List<string> sheetNames = new List<string>();  
                 foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)  
-                {  
-                    for(int row=2;row<=worksheet.Dimension.End.Row;row++){
+                {
+                    string sheetName = worksheet.Name;  //工作簿的名称                   
+                    string dataDesc = GetXlsFileName(f.Filename);
+                    string dataName = sheetName;
+
+                    for (int row=2;row<=worksheet.Dimension.End.Row;row++){
 
                         Org_dataDTO item = new Org_dataDTO();
                         for (int col = 1; col <= worksheet.Dimension.Columns; col++)  
@@ -59,8 +63,8 @@ namespace my_orange_easyxls.Service
                             string fieldName  = "Field"+col.ToString();//字段名
                             item              = (Org_dataDTO)MyClassConvert.setClassPropertyValueFromSourceToDest(fieldName,fieldValue,item);  
                         }
-                        item.Org_fieldid = org_fieldid;
-                        item.Org_fileid  = org_fileid ;
+                        item.Dataname    = sheetName;
+                        item.Datadesc    = dataDesc;
                         item.State       =  0 ;
                         item.Createtime  = DateTime.Now;   
                         lstFile.Add(item);
@@ -90,12 +94,13 @@ namespace my_orange_easyxls.Service
             // 使用 EPPlus 打开 Excel 包  
             using (ExcelPackage package = new ExcelPackage(fileInfo))  
             {
-                List<string> sheetNames = new List<string>();  
+                List<string> sheetNames = new List<string>();
+                
                 foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)  
                 {  
-                    string sheetName = worksheet.Name;  //工作簿的名称
-                    string dataName  = DateTime.Now.ToString("yyyyMMddHHmmss");
-                    string dataDesc  = GetXlsFileName(f.Filename)+"."+sheetName; 
+                    string sheetName = worksheet.Name;  //工作簿的名称                   
+                    string dataDesc  = GetXlsFileName(f.Filename);
+                    string dataName  = sheetName;
                     for (int col = 1; col <= worksheet.Dimension.Columns; col++)  
                     {  
 
@@ -109,7 +114,7 @@ namespace my_orange_easyxls.Service
                             Fieldname  = colName,
                             Org_fileid = f.Id,
                             Dataname   = dataName,
-                            Datadesc   = this.GetXlsFileName(f.Filename)+"."+sheetName,
+                            Datadesc   = dataDesc,
                             Createtime = DateTime.Now,
                             State      = 0
 

@@ -7,7 +7,7 @@ namespace my_orange_easyxls.Models
         /// <summary>
         /// 每页记录数
         /// </summary>
-        public static int PageSize = 5;
+        public static int PageSize = 10;
 
         /// <summary>
         /// 

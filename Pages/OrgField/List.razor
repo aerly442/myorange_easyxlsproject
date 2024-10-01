@@ -22,6 +22,8 @@
             <p class="mb-0">请选择</p>
         </div>
         <div class="col-md-3">
+
+    
             <!-- 第二列：下拉选择框 -->
             <select class="form-control" @bind="searchDTO.FieldName">
                 <option selected value="fieldname">字段名</option>
@@ -40,19 +42,21 @@
         </div>
         <div class="col-md-2 text-center">
 
-            <a href="OrgFile/Upload" class="btn btn-success">上传</a>
+            <button class="btn btn-danger btn-block" @onclick="ShowDeleteAllDlg">清空数据</button>
+
         </div>
     </div>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">编号</th>
+                    <th scope="col">编号</th>                 
+                    <th scope="col">文件名</th>
+                    <th scope="col">工作部</th>
                     <th scope="col">序号</th>
                     <th scope="col">字段名</th>
                     <th scope="col">文件Id</th>
-                    <th scope="col">数据名</th>
-                     <th scope="col">数据描述</th>
+
                      <th scope="col">创建时间</th>
                     <th scope="col">状态</th>
                     <th scope="col" style="width:150px">操作</th>
@@ -65,11 +69,12 @@
                     {
                         <tr>
                             <td>@item.Id</td>
+                            <td> @item.Datadesc</td>
+                            <td> @item.Dataname</td>
                             <td>@item.Fieldnum</td>
                             <td> @item.Fieldname</td>
                             <td> @item.Org_fileid</td>
-                            <td> @item.Dataname</td>
-                            <td> @item.Datadesc</td>
+     
                             <td>
                                 @item.Createtime.ToString("yyyy-MM-dd")
                             </td>
@@ -171,6 +176,21 @@
             await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
             StateHasChanged();
             
+        }
+    }
+
+    private async Task ShowDeleteAllDlg()
+    {
+        //this.mId = id;
+        var dlgResult = await dlg.Confirm("您确定要删除所有数据吗?", "提示", new ConfirmOptions() { OkButtonText = "确定", CancelButtonText = "取消" });
+        if ((bool)dlgResult)
+        {
+            dlg.Close();
+            var blnDelete = await mService.DeleteAll();
+            var info = blnDelete ? "删除成功" : "删除失败";
+            await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
+            await SearchData();
+
         }
     }
  

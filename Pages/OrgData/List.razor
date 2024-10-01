@@ -1,8 +1,9 @@
-﻿@page "/OrgFile/List"
+﻿@page "/OrgData/List"
 @using my_orange_easyxls.DTO
 @using my_orange_easyxls.Service
 @using my_orange_easyxls.Models
-@inject OrgFileService mService
+@inject OrgDataService mService
+@inject OrgFieldService orgFieldService
 @attribute [Authorize(Roles = "Admin, User")]
 @inject NavigationManager nv
 @using Microsoft.AspNetCore.Components.Web
@@ -11,8 +12,7 @@
 <div class="container">
     <div class="row" style="padding-bottom:30px">
         <div class="col-md-5">
-            <h4>文件列表</h4>
-            
+            <h4>字段列表</h4>
         </div>
         <div class="col-md-5 text-end"></div>
     </div>
@@ -22,26 +22,34 @@
             <!-- 第一列：仅文本，实际使用时可能需要将其包装在适当的标签中，如<label> -->
             <p class="mb-0">请选择</p>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <!-- 第二列：下拉选择框 -->
-            <select class="form-control" @bind="searchDTO.FieldName">
-                <option selected value="filename">文件名</option>
-               
-
-            </select>
+            <RadzenDropDown @bind-Value="@SelectDataDescValue" Data="@lstDataDesc"                          
+                            Style="width: 100%; " Name="ddlDataDesc"
+                            Change="@(args => OnDataDescOptionChanged())" />
+            
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
+            <!-- 第二列：下拉选择框 -->
+           
+            <RadzenDropDown @bind-Value="@SelectDataNameValue" Data="@lstDataName"
+                            Style="width: 100%; " Name="ddlDataName"
+                            Change="@(args => SearchData())" />
+        </div>
+        <div class="col-md-3">
             <!-- 第三列：文本框 -->
             <input type="text" class="form-control" @bind="searchDTO.SearchValue" placeholder="请输入搜索内容">
         </div>
         <div class="col-md-2">
             <!-- 最后一列：搜索按钮 -->
             <button class="btn btn-primary btn-block" @onclick="SearchData">搜索</button>
+           
+            
 
         </div>
         <div class="col-md-2 text-center">
-
-            <a href="OrgFile/Upload" class="btn btn-success">上传</a>
+            <button class="btn btn-danger btn-block" @onclick="ShowDeleteAllDlg">清空数据</button>
+            
         </div>
     </div>
     <div class="table-responsive">
@@ -50,9 +58,12 @@
                 <tr>
                     <th scope="col">编号</th>
                     <th scope="col">文件名</th>
-                    <th scope="col">文件地址</th>
-                    <th scope="col">上传时间</th>
-                    <th scope="col">状态</th>
+                    <th scope="col">工作簿</th>
+                    <th scope="col">字段1</th>
+                    <th scope="col">字段2</th>
+                    <th scope="col">字段3</th>
+                    <th scope="col">创建时间</th>
+                     
                     <th scope="col" style="width:150px">操作</th>
                 </tr>
             </thead>
@@ -63,32 +74,16 @@
                     {
                         <tr>
                             <td>@item.Id</td>
-                            <td>@item.Filename</td>
-
-                            <td>
-                                
-                                    @item.FileUrl
-                               
-
-                            </td>
+                            <td >@item.Datadesc</td>
+                            <td >@item.Dataname</td>
+                            <td> @item.Field1</td>
+                            <td> @item.Field2</td>
+                            <td> @item.Field3</td>
                             <td>
                                 @item.Createtime.ToString("yyyy-MM-dd")
                             </td>
 
-                            <td>@(item.State == 1 ? "已导入" : "新上传")</td>
-                            <td>
-
-
-
-                                <button @onclick="@(() => showImportDlg(item))" class="btn btn-success bt">
-                                    导入
-                                </button>
-                                &nbsp;
-                                <button @onclick="@(() => showDeleteDlg(item.Id))" class="btn btn-danger bt">
-                                    删除
-                                </button>
-
-
+                             <td>
 
                             </td>
                         </tr>
@@ -107,44 +102,59 @@
             <span>总数: @(TotalCount)</span>
 
         </div>
-        <RadzenPager ShowPagingSummary="true" 
-              PagingSummaryFormat="@("")"
-              HorizontalAlign="HorizontalAlign.Right"
+        <RadzenPager ShowPagingSummary="true"
+                     PagingSummaryFormat="@("")"
+                     HorizontalAlign="HorizontalAlign.Right"
                      Count="TotalCount" PageSize="@pageSize"
-                     PageNumbersCount="5" 
-              PageChanged="@PageChanged" />
-        
+                     PageNumbersCount="5"
+                     PageChanged="@PageChanged" />
+
     </div>
 
 
 </div>
 
- 
+
 
 @code {
 
-    private List<Org_fileDTO> lst;
+    private List<Org_dataDTO> lst;
     private SearchDTO searchDTO = new SearchDTO() { FieldName = "filename", SearchValue = "" };
     private String PageHtml = "";
     private int TotalCount = 0;
 
     //string pagingSummaryFormat = "";
-    int    pageSize            = MyPage.PageSize;
+    int pageSize = MyPage.PageSize;
+    //int count;
 
+    private List<String> lstDataDesc = new List<string>();
+    private List<String> lstDataName = new List<string>();
+    private string SelectDataDescValue = "";
+    private string SelectDataNameValue = "";
 
     protected override async Task OnInitializedAsync()
     {
-
         await GetData(1);
-        //.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+        lstDataDesc = await orgFieldService.GetDatadesc();
     }
 
     private async Task GetData(int pageIndex)
     {
-        var searchResultDTO = await mService.GetList(searchDTO, pageIndex);
-        lst                 = searchResultDTO.Data;       
+        string dataDesc     = this.SelectDataDescValue;
+        string dataName     = this.SelectDataNameValue;
+        var searchResultDTO = await mService.GetList(dataDesc, dataName, pageIndex);
+        lst                 = searchResultDTO.Data;
         TotalCount          = searchResultDTO.TotalCount;
     }
+
+    private async void OnDataDescOptionChanged()
+    {
+     
+        this.lstDataName = await orgFieldService.GetDataname(SelectDataDescValue);
+        
+    }
+
+ 
 
     private async Task SearchData()
     {
@@ -170,45 +180,32 @@
         var dlgResult = await dlg.Confirm("您确定要删除吗?", "提示", new ConfirmOptions() { OkButtonText = "确定", CancelButtonText = "取消" });
         if ((bool)dlgResult)
         {
+
+            var blnDelete = await mService.Delete(new Org_dataDTO() { Id = this.mId });
+            var info = blnDelete ? "删除成功" : "删除失败";
+            await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
+            StateHasChanged();
+
+        }
+    }
+
+    private async Task ShowDeleteAllDlg()
+    {
+        //this.mId = id;
+        var dlgResult = await dlg.Confirm("您确定要删除所有数据吗?", "提示", new ConfirmOptions() { OkButtonText = "确定", CancelButtonText = "取消" });
+        if ((bool)dlgResult)
+        {
             dlg.Close();
-            var blnDelete = await mService.Delete(new Org_fileDTO() { Id = this.mId });
+            var blnDelete = await mService.DeleteAll();
             var info = blnDelete ? "删除成功" : "删除失败";
             await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
             await SearchData();
-            //StateHasChanged();
 
         }
     }
 
-    private async Task showImportDlg(Org_fileDTO item)
-    {
-        this.mId = item.Id;
-        var dlgResult = await dlg.Confirm("您确定要导入吗?", "提示", new ConfirmOptions() { OkButtonText = "确定", CancelButtonText = "取消" });
-        if ((bool)dlgResult)
-        {
 
-            Task.Run(async () =>
-           {
-                   bool blnImport =  await mService.Import(item);
-                   var info = blnImport ? "导入成功" : "导入失败";
-                   dlg.Close();
-                   await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
-            });
 
-            await BusyDialog();
 
-            
-        }
-    }
-
-    async Task BusyDialog()
-    {
-        await dlg.OpenAsync("", ds =>
-            @<RadzenStack AlignItems="AlignItems.Center" Gap="2rem" class="rz-p-12">
-        
-        <RadzenText TextStyle="TextStyle.H6">导入中 ... </RadzenText>
-    </RadzenStack>, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
-    }
- 
 
 }

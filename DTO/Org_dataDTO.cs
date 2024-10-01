@@ -104,8 +104,10 @@
         public string? Field99 { get; set; }
         public string? Field100 { get; set; }
 
-        public int Org_fieldid { get; set; } 
-        public int Org_fileid { get; set; } 
+ 
+
+        public string? Dataname { get; set; }
+        public string? Datadesc { get; set; }
 
         public DateTime Createtime { get; set; } // SQLite中的TIMESTAMP DEFAULT CURRENT_TIMESTAMP，在C#中通常使用DateTime  
         public int State { get; set; } // SQLite中的TEXT CHECK(state IN ('active', 'inactive', 'deleted')) NOT NULL  
