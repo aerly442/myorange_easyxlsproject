@@ -262,13 +262,48 @@ namespace my_orange_easyxls.Service
 
         }
 
+        private string GetContiditon(string strValue,string strMark)
+        {
+            if (string.IsNullOrEmpty(strMark) || 
+                strMark.IndexOf("contains") > -1)
+            {
+                return ".contains(\"" + strValue + "\") and ";
+            }
+
+            return " "+strMark+"\"" + strValue + "\" and ";
+
+        }
+
+        private string GetWhereFromSearchDTOs(SearchDTO[] searchDTO)
+        {
+            string where = "";
+            int i        = 1;
+            foreach(var s  in searchDTO)
+            {
+                if (!string.IsNullOrEmpty(s.FieldName)
+                    && !string.IsNullOrEmpty(s.SearchValue))
+                {
+                    where += s.FieldName + this.GetContiditon(s.SearchValue,s.Condition)  ;
+                }
+
+                i = i + 1;
+
+            }
+
+            return where;
+
+
+
+        }
         /// <summary>
         /// 获取数据列表
         /// </summary>
         /// <param name="searchDTO">查询对象：字段名称和值</param>
         /// <param name="pageNumber">当前页码</param>
         /// <returns></returns>
-        public async Task<SearchResultDTO<List<Org_dataDTO>>> GetList(String dataDesc,string dataName, int pageNumber)
+        public async Task<SearchResultDTO<List<Org_dataDTO>>> GetList(String dataDesc,string dataName,
+            SearchDTO[] searchDTO,
+            int pageNumber)
         {
             IQueryable<Org_dataDTO> query = this.GetProjectQuery();
 
@@ -287,6 +322,9 @@ namespace my_orange_easyxls.Service
                 {
                     where += "Dataname=\"" + dataName + "\" and ";
                 }
+
+                where += this.GetWhereFromSearchDTOs(searchDTO);
+
                 where += " Id>0";
             }
             var q = query.Where(where);

@@ -178,16 +178,24 @@ namespace my_orange_easyxls.Service
 
         public async Task<List<string>> GetDatadesc()
         {
-            List<string> lst = await _context.OrgData.Select(x => x.Datadesc).Distinct().ToListAsync();
+            List<string> lst = await _context.OrgField.Select(x => x.Datadesc).Distinct().ToListAsync();
             return lst;
 
         }
         public async Task<List<string>> GetDataname(string dataDesc)
         {
-            List<string> lst = await _context.OrgData.Where(x=>x.Datadesc==dataDesc).Select(x => x.Dataname).Distinct().ToListAsync();
+            List<string> lst = await _context.OrgField.Where(x=>x.Datadesc==dataDesc).Select(x => x.Dataname).Distinct().ToListAsync();
             return lst;
 
         }
+
+        public async Task<List<string>> GetFieldname(string dataName,string dataDesc)
+        {
+            List<string> lst = await _context.OrgField.Where(x => x.Datadesc == dataDesc && x.Dataname == dataName).Select(x => x.Fieldname).Distinct().ToListAsync();
+            return lst;
+
+        }
+
 
     }
 }

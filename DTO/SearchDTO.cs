@@ -10,5 +10,8 @@
         /// 字段值
         /// </summary>
         public string? SearchValue { get;set; }
+
+        //public List<SearchConditionDTO>? lstCondition { get; set; }
+        public string? Condition { get; set; }
     }
 }
