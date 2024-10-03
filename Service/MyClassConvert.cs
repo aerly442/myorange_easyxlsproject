@@ -75,9 +75,33 @@ namespace my_orange_easyxls.Service
             }
 
         }
+        public static string getClassPropertyValueFromSourceToDest(string fieldName,
+                     object dest
+            )
+        {
+            try
+            {
 
-    
+                Type type = dest.GetType();
+                PropertyInfo propertyInfo = type.GetProperty(fieldName);
+                if (propertyInfo != null && propertyInfo.CanWrite)
+                {
+                    // 设置属性值  
+                    var value  = propertyInfo.GetValue(dest);
+                    string strValue = value != null ? value.ToString() : "";
+                    return strValue;
+                }
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
 
-  
+        }
+
+
+
+
     }
 }

@@ -269,6 +269,12 @@ namespace my_orange_easyxls.Service
             {
                 return ".contains(\"" + strValue + "\") and ";
             }
+            if (string.IsNullOrEmpty(strMark) ||
+                    strMark.IndexOf("in") > -1)
+            {
+                strValue = strValue.IndexOf(",")>0?strValue.Replace(",","\",\""):strValue;
+                return " "+ strMark+" (\"" + strValue + "\") and ";
+            }
 
             return " "+strMark+"\"" + strValue + "\" and ";
 
@@ -338,6 +344,45 @@ namespace my_orange_easyxls.Service
             this._logger.LogInformation("This is Test");
 
             return searchResultDTO;
+
+
+        }
+
+        /// <summary>
+        /// 获取数据列表
+        /// </summary>
+        /// <param name="searchDTO">查询对象：字段名称和值</param>
+        /// <param name="pageNumber">当前页码</param>
+        /// <returns></returns>
+        public async Task<List<Org_dataDTO>> GetAllList(String dataDesc, string dataName,
+            SearchDTO[] searchDTO)
+        {
+            IQueryable<Org_dataDTO> query = this.GetProjectQuery();
+            string where = "";
+            if (string.IsNullOrEmpty(dataName) && string.IsNullOrEmpty(dataDesc))
+            {
+                where = " Id>0";
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(dataDesc))
+                {
+                    where = "Datadesc=\"" + dataDesc + "\" and ";
+                }
+                if (!string.IsNullOrEmpty(dataName))
+                {
+                    where += "Dataname=\"" + dataName + "\" and ";
+                }
+
+                where += this.GetWhereFromSearchDTOs(searchDTO);
+
+                where += " Id>0";
+            }
+            var q = query.Where(where);
+            var lst = await q.OrderByDescending(x => x.Id).ToListAsync();
+             
+
+            return lst;
 
 
         }

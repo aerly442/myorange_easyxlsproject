@@ -13,10 +13,12 @@ namespace my_orange_easyxls.Service
         
 
         private readonly IWebHostEnvironment? _hostEnvironment;
+        private readonly FileUploadService fileUploadService;
         //IWebHostEnvironment Environment
-        public XlsFileService(IWebHostEnvironment hostEnvironment)
+        public XlsFileService(IWebHostEnvironment hostEnvironment,FileUploadService _fileUploadService)
         {
             _hostEnvironment = hostEnvironment;
+            fileUploadService = _fileUploadService;
 
         }
 
@@ -81,8 +83,49 @@ namespace my_orange_easyxls.Service
 
         }
 
-        //读取xlsx文件获取工作簿名称和列明 
-        public List<Org_fieldDTO> GetOrgFieldByFile(Org_fileDTO f){
+
+    public void ExportFile(List<String> lstHeader,string sheetName, List<Org_dataDTO> lstData) {
+
+            string fileName = fileUploadService.GetExportFileName();
+            using (ExcelPackage excelPackage = new ExcelPackage())
+            {
+                // 添加一个新的工作表  
+                ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add(sheetName);
+
+                ///01 写入第一行作为表头
+                int colIndex = 1;
+                foreach(var head in lstHeader)
+                {
+                    worksheet.Cells[1, colIndex].Value = head;
+                    colIndex++;
+                }
+
+                //02开始写入数据
+
+                for(int i = 0; i < lstData.Count; i++)
+                {
+                    int row = i + 2;
+                    for(int col = 0;col<lstHeader.Count; col++)
+                    {
+
+                       var cellValue = MyClassConvert.getClassPropertyValueFromSourceToDest("Field"+(col+1),
+                            lstData[i]);
+                        worksheet.Cells[row, col + 1].Value = cellValue;
+                    }
+
+                }
+
+
+
+                // 保存Excel文件  
+                FileInfo file = new FileInfo(fileName);
+                excelPackage.SaveAs(file);
+            }
+  
+        }
+
+    //读取xlsx文件获取工作簿名称和列明 
+    public List<Org_fieldDTO> GetOrgFieldByFile(Org_fileDTO f){
             
             string path     = _hostEnvironment.WebRootPath;
             string filePath = path +f.FileUrl;

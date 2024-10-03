@@ -4,6 +4,7 @@
 @using my_orange_easyxls.Models
 @inject OrgDataService mService
 @inject OrgFieldService orgFieldService
+@inject XlsFileService xlsFileService
 @attribute [Authorize(Roles = "Admin, User")]
 @inject NavigationManager nv
 @using Microsoft.AspNetCore.Components.Web
@@ -17,35 +18,27 @@
         <div class="col-md-5 text-end"></div>
     </div>
 
-    <div class="row" style="padding-bottom:5px">
+    <div class="row" style="padding-bottom:10px">
         <div class="col-md-1">
             <!-- 第一列：仅文本，实际使用时可能需要将其包装在适当的标签中，如<label> -->
             <p class="mb-0">请选择</p>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
             <!-- 第二列：下拉选择框 -->
             <RadzenDropDown @bind-Value="@SelectDataDescValue" Data="@lstDataDesc"                          
                             Style="width: 100%; " Name="ddlDataDesc"
                             Change="@(args => OnDataDescOptionChanged())" />
             
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
             <!-- 第二列：下拉选择框 -->
            
             <RadzenDropDown @bind-Value="@SelectDataNameValue" Data="@lstDataName"
                             Style="width: 100%; " Name="ddlDataName"
                             Change="@(args => OnDataNameOptionChanged())" />
         </div>
-        <div class="col-md-2">
-            <!-- 第三列：文本框 -->
-            <RadzenDropDown @bind-Value="@lstSearchDTO[0].FieldName" Data="@lstFieldName"
-                            Style="width: 100%; " Name="ddlFieldName"
-                           />
-        </div>
-        <div class="col-md-2">
-            <!-- 第三列：文本框 -->
-            <input type="text" class="form-control" @bind="@lstSearchDTO[0].SearchValue" placeholder="请输入搜索内容">
-        </div>
+ 
+    
         <div class="col-md-1">
             <!-- 最后一列：搜索按钮 -->
             <button class="btn btn-primary btn-block" @onclick="SearchData">搜索</button>
@@ -56,18 +49,102 @@
             
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-9">
+     @foreach (var s in lstSearchDTO)
+    {
+       
+            <div class="row" style="padding-bottom:5px">
+                <div class="col-md-1">
+                选择列
+            </div>
+            <div class="col-md-2">
+                <RadzenDropDown @bind-Value="@s.FieldName" Data="@lstFieldName"
+                                Style="width: 100%; " Name="ddlFieldName" 
+                                 />
+            </div>
+            <div class="col-md-2">
+                <RadzenDropDown @bind-Value="@s.Condition" Data="@lstCondition"
+                                TextProperty="@nameof(SearchConditionDTO.Name)"
+                                ValueProperty="@nameof(SearchConditionDTO.Mark)"
+                                Style="width: 100%; " Name="ddlFieldName"
+                                Change="@(args => OnSearchConditionOptionChanged(args))" />
+            </div>
+            <div class="col-md-6">
+                <textarea rows="@RowCount" class="form-control" @bind="@s.SearchValue" placeholder="请输入搜索内容,多项数据使用,分割" />
+            </div>
+             
+            </div>
+
+         
+       
+    }
+    <div class="row" style="padding-bottom:10px">
+        <div class="col-md-1">
+            选范围
+        </div>
+        <div class="col-md-2">
+            <RadzenDropDown @bind-Value="@LeftFieldNameValue" Data="@lstFieldName"
+                            Style="width: 100%; " Name="ddlFieldName" />
+        </div>
+        <div class="col-md-2">
+            <RadzenDropDown @bind-Value="@LeftConditionValue" Data="@lstOutCondition"
+                            TextProperty="@nameof(SearchConditionDTO.Name)"
+                            ValueProperty="@nameof(SearchConditionDTO.Mark)"
+                            Style="width: 100%; " Name="ddlOutCondition" />
+           
+        </div>
+        <div class="col-md-2">
+            <RadzenDropDown @bind-Value="@LeftDataDescValue" Data="@lstDataDesc"
+                            Style="width: 100%; " Name="ddlDataDesc"
+                            Change="@(args => OnDataDescOptionChanged())" />
+           
+        </div>
+        <div class="col-md-2">
+
+            <RadzenDropDown @bind-Value="@LeftDataNameValue" Data="@lstDataName"
+                            Style="width: 100%; " Name="ddlDataName"
+                            Change="@(args => OnDataNameOptionChanged())" />
+
+             
+
+            
+               
             
         </div>
-         
-        <div class="col-md-3">
-            <!-- 最后一列：搜索按钮 -->
-            <button class="btn btn-primary btn-block" @onclick="showAdSearchDlg">高级搜索</button>
+        <div class="col-md-2">
+            <RadzenDropDown @bind-Value="@OutFieldNameValue" Data="@lstFieldName"
+                            Style="width: 100%; " Name="ddlFieldName" />
+        </div>
+    </div>
+    <div class="row" style="padding-bottom:10px;padding-top:5px">
+        <div class="col-md-1">
+            <!-- 第一列：仅文本，实际使用时可能需要将其包装在适当的标签中，如<label> -->
+            
+        </div>
+        <div class="col-md-2">
+            <!-- 第二列：下拉选择框 -->
+             
 
         </div>
-         
+        <div class="col-md-2">
+            <!-- 第二列：下拉选择框 -->
 
+
+        </div>
+        <div class="col-md-2">
+            <!-- 第二列：下拉选择框 -->
+
+
+        </div>
+        <div class="col-md-2 text-left" style="padding-top:10px">
+           
+            <!-- 第二列：下拉选择框 -->
+            <InputCheckbox class="form-check-input "  @bind-Value="IsApplyAllSheet"></InputCheckbox> 适用于所有工作簿
+ 
+        </div>     
+        <div class="col-md-2 text-end">
+            <button class="btn btn-success btn-block" @onclick="ExportSearchData">导出查询数据</button>
+
+        </div>
     </div>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -140,6 +217,7 @@
 
     //string pagingSummaryFormat = "";
     int pageSize = MyPage.PageSize;
+    private int RowCount = 1;
     //int count;
 
     private List<String> lstDataDesc = new List<string>();
@@ -157,6 +235,7 @@
     private String SelectContitionValue = "";    
     private int MaxFieldCount = 3;
     private int indexField    = 0;
+    private bool IsApplyAllSheet = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -168,11 +247,7 @@
 
     }
 
-    private string  GetSearchFieldName()
-    {
-        int index = lstFieldName.IndexOf(SelecFieldNameValue);
-        return index < 0 ? "Field1" : "Field" + (index + 1).ToString();
-    }
+
     private string GetSearchFieldName(string value)
     {
         int index = lstFieldName.IndexOf(value);
@@ -209,23 +284,38 @@
 
         lstDisplayFieldName = lstFieldName.Take(3).ToList();
     }
-    private async Task GetData(int pageIndex)
+    private SearchDTO[] GetRightSearchDTO()
     {
-
+        SearchDTO[] _lst = lstSearchDTO ==null? null: new SearchDTO[lstSearchDTO.Length];
         if (lstSearchDTO != null)
         {
+            var i = 0;
             foreach (var s in lstSearchDTO)
             {
-                if (string.IsNullOrEmpty(s.FieldName) == false)
-                {
-                    s.FieldName = this.GetSearchFieldName(s.FieldName);
-                }
+                var fieldName = string.IsNullOrEmpty(s.FieldName) == false?this.GetSearchFieldName(s.FieldName) : s.FieldName;
+                var d = new SearchDTO()
+                    {
+                        FieldName   = fieldName,
+                        SearchValue = s.SearchValue,
+                        Condition   = s.Condition
 
+                   };
+
+                _lst[i] = d;
+                i = i + 1;
             }
         }
 
+        return _lst;
+
+    }
+    private async Task GetData(int pageIndex)
+    {
+
+        var _lstSearchDTO = this.GetRightSearchDTO();
+
         var searchResultDTO = await mService.GetList(this.SelectDataDescValue, this.SelectDataNameValue,
-            lstSearchDTO, pageIndex);
+            _lstSearchDTO, pageIndex);
         lst                      = searchResultDTO.Data;
         TotalCount               = searchResultDTO.TotalCount;
 
@@ -242,12 +332,22 @@
 
     }
 
+    private void OnSearchConditionOptionChanged(Object args)
+    {
+        if (args != null && args.ToString().IndexOf("in") > -1)
+        {
+            this.RowCount = 2;
+        }
+        else
+        {
+            this.RowCount = 1;
+        }
+
+    }
+
     private async void OnDataNameOptionChanged()
     {
-
-        //this.lstDataName = await orgFieldService.GetDataname(SelectDataDescValue);
         BindSearchDTO();
-
     }
 
 
@@ -285,90 +385,27 @@
         }
     }
 
+    private async Task ExportSearchData()
+    {
+        //01 获取查询数据
+        var _lstSearchDTO = this.GetRightSearchDTO();
+        var lstData       = await mService.GetAllList(this.SelectDataDescValue, this.SelectDataNameValue,
+            _lstSearchDTO);
+        xlsFileService.ExportFile(this.lstFieldName, this.SelectDataNameValue, lstData);
+        await dlg.Alert("导出完成", "提示", new AlertOptions() { OkButtonText = "确定" });
+     
+
+    }
+
     private String LeftFieldNameValue  = "";
     private String LeftConditionValue  = "";
     private String OutFieldNameValue  = "";
     private String LeftDataNameValue = "";
     private string LeftDataDescValue = "";
     //显示高级搜索窗口
-    private async Task showAdSearchDlg()
-    {
-        var result = await dlg.OpenAsync("高级搜索", ds =>
-        @<RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;width:100%">
-        @foreach(var s in lstSearchDTO){
-             <RadzenRow  Gap="1rem">
-                <RadzenColumn Size="4"  >
-                <RadzenDropDown @bind-Value="@s.FieldName" Data="@lstFieldName"
-                                    Style="width: 100%; " Name="ddlFieldName" />
-                </RadzenColumn>
-            <RadzenColumn Size="3">
-                <RadzenDropDown @bind-Value="@s.Condition" Data="@lstCondition"
-                                TextProperty="@nameof(SearchConditionDTO.Name)"
-                                ValueProperty="@nameof(SearchConditionDTO.Mark)"
-                                    Style="width: 100%; " Name="ddlFieldName" />
-                </RadzenColumn>
-                <RadzenColumn  >
-                <input type="text" class="form-control" @bind="@s.SearchValue" placeholder="请输入搜索内容">
-                </RadzenColumn>
-            </RadzenRow>
-        }
-        <RadzenRow Gap="1rem">
-            <RadzenColumn Size="3">
-                <RadzenDropDown @bind-Value="@LeftFieldNameValue" Data="@lstFieldName"
-                                Style="width: 100%; " Name="ddlFieldName" />
-            </RadzenColumn>
-            <RadzenColumn Size="3">
-                <RadzenDropDown @bind-Value="@LeftConditionValue" Data="@lstOutCondition"
-                                TextProperty="@nameof(SearchConditionDTO.Name)"
-                                ValueProperty="@nameof(SearchConditionDTO.Mark)"
-                                Style="width: 100%; " Name="ddlOutCondition" />
-            </RadzenColumn>
-            <RadzenColumn Size="3">
-                <RadzenDropDown @bind-Value="@LeftDataDescValue" Data="@lstDataDesc"
-                                Style="width: 100%; " Name="ddlDataDesc"
-                                Change="@(args => OnDataDescOptionChanged())" />
-            </RadzenColumn>
-            <RadzenColumn Size="3">
-                <RadzenDropDown @bind-Value="@LeftDataNameValue" Data="@lstDataName"
-                                Style="width: 100%; " Name="ddlDataName"
-                                Change="@(args => OnDataNameOptionChanged())" />
-            </RadzenColumn>
-            <RadzenColumn Size="3">
-                <RadzenDropDown @bind-Value="@OutFieldNameValue" Data="@lstFieldName"
-                                Style="width: 100%; " Name="ddlFieldName" />
-            </RadzenColumn>
-        </RadzenRow>
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
-            <RadzenButton Click="() => AdSearchData()"
-                          Variant="Variant.Flat" Text="确定" Style="width: 120px" />
-            </RadzenStack>
-        </RadzenStack>
-    );
+  
 
-    }
-
-    private async Task AdSearchData()
-    {
-        string dataDesc = this.SelectDataDescValue;
-        string dataName = this.SelectDataNameValue;
-        //BindSearchDTO();
-        if (lstSearchDTO != null)
-        {
-            foreach (var s in lstSearchDTO)
-            {
-                if (string.IsNullOrEmpty(s.FieldName) == false)
-                {
-                    s.FieldName = this.GetSearchFieldName(s.FieldName);
-                }
-
-            }
-        }
-        var searchResultDTO = await mService.GetList(dataDesc, dataName, this.lstSearchDTO, 1);
-        lst = searchResultDTO.Data;
-        TotalCount = searchResultDTO.TotalCount;
-        StateHasChanged();
-
-    }
+  
 
     private async Task ShowDeleteAllDlg()
     {

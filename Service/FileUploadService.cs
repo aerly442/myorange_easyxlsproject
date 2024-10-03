@@ -55,6 +55,11 @@ namespace my_orange_easyxls.Service
 
         }
 
+        public string GetExportFileName()
+        {
+            return _hostEnvironment.WebRootPath+GetFilePath() +"/"+ GetFileName()+"-export.xlsx";
+        }
+
         public string? ErrorInfo { get; set; }
 
 
