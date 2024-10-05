@@ -25,19 +25,38 @@ namespace my_orange_easyxls.Service
             
         }
 
-        public async Task<bool> Save(List<Org_dataDTO> lstFile )
+        public async Task<bool> Save(List<Org_dataDTO> lstData )
         {
 
-            if (lstFile!=null && lstFile.Count > 0)
+            if (lstData!=null && lstData.Count > 0)
             {
-              
-                //002 再保存
-                foreach(var f in lstFile)
-                {
 
-                    await this.Save(f);
+                List<Org_data> lstModels = new List<Org_data>();
+                int i = 0;
+                //002 再保存
+                foreach(var p in lstData)
+                {
+                    var data = new Org_data();
+                    _context.Entry(data).CurrentValues.SetValues(p);
+                    lstModels.Add(data);
+                    if (i % 50 == 0 && i>50)
+                    {
+                        _context.OrgData.AddRange(lstModels);
+                        await _context.SaveChangesAsync();
+                        lstModels.Clear();
+                    }
+
+                    i = i++;
 
                 }
+
+                if (lstModels.Count > 0)
+                {
+                    _context.OrgData.AddRange(lstModels);
+                    await _context.SaveChangesAsync();
+                }
+
+  
 
             }
 
@@ -97,7 +116,7 @@ namespace my_orange_easyxls.Service
             }
             if (string.IsNullOrEmpty(dataName) == false)
             {
-                strSql += " dataame='" + dataName + "' and ";
+                strSql += " dataname='" + dataName + "' and ";
             }
             strSql += " Id>0";
             await _context.Database.ExecuteSqlRawAsync(strSql);
