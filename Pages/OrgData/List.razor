@@ -13,7 +13,7 @@
 <div class="container">
     <div class="row" style="padding-bottom:30px">
         <div class="col-md-5">
-            <h4>字段列表</h4>
+            <h4>数据查询和导出</h4>
         </div>
         <div class="col-md-5 text-end"></div>
     </div>
@@ -95,14 +95,14 @@
         <div class="col-md-2">
             <RadzenDropDown @bind-Value="@LeftDataDescValue" Data="@lstDataDesc"
                             Style="width: 100%; " Name="ddlDataDesc"
-                            Change="@(args => OnDataDescOptionChanged())" />
+                            Change="@(args => OnDataDescOptionChanged2())" />
            
         </div>
         <div class="col-md-2">
 
-            <RadzenDropDown @bind-Value="@LeftDataNameValue" Data="@lstDataName"
+            <RadzenDropDown @bind-Value="@LeftDataNameValue" Data="@lstDataName2"
                             Style="width: 100%; " Name="ddlDataName"
-                            Change="@(args => OnDataNameOptionChanged())" />
+                            Change="@(args => OnDataNameOptionChanged2())" />
 
              
 
@@ -111,7 +111,7 @@
             
         </div>
         <div class="col-md-2">
-            <RadzenDropDown @bind-Value="@OutFieldNameValue" Data="@lstFieldName"
+            <RadzenDropDown @bind-Value="@LeftOutFieldNameValue" Data="@lstFieldName2"
                             Style="width: 100%; " Name="ddlFieldName" />
         </div>
     </div>
@@ -223,7 +223,11 @@
     private List<String> lstDataDesc = new List<string>();
     private List<String> lstDataName = new List<string>();
 
+    //private List<String> lstDataDesc = new List<string>();
+    private List<String> lstDataName2 = new List<string>();
+
     private List<String> lstFieldName = new List<string>();
+    private List<String> lstFieldName2 = new List<string>();
     private List<String> lstDisplayFieldName = new List<string>();
     private List<SearchConditionDTO> lstCondition = new List<SearchConditionDTO>();
     private List<SearchConditionDTO> lstOutCondition = new List<SearchConditionDTO>();
@@ -251,6 +255,11 @@
     private string GetSearchFieldName(string value)
     {
         int index = lstFieldName.IndexOf(value);
+        return index < 0 ? "Field1" : "Field" + (index + 1).ToString();
+    }
+    private string GetSearchFieldName(List<string> lst,string value)
+    {
+        int index = lst.IndexOf(value);
         return index < 0 ? "Field1" : "Field" + (index + 1).ToString();
     }
 
@@ -314,8 +323,11 @@
 
         var _lstSearchDTO = this.GetRightSearchDTO();
 
-        var searchResultDTO = await mService.GetList(this.SelectDataDescValue, this.SelectDataNameValue,
-            _lstSearchDTO, pageIndex);
+        var searchResultDTO =  await mService.GetList(this.SelectDataDescValue, this.SelectDataNameValue,
+                _lstSearchDTO, pageIndex, this.LeftDataDescValue, LeftDataNameValue, 
+                this.GetSearchFieldName(this.lstFieldName,this.LeftFieldNameValue), 
+                GetSearchFieldName(this.lstFieldName2,this.LeftOutFieldNameValue));
+
         lst                      = searchResultDTO.Data;
         TotalCount               = searchResultDTO.TotalCount;
 
@@ -327,6 +339,14 @@
     {
 
         this.lstDataName = await orgFieldService.GetDataname(SelectDataDescValue);
+
+
+
+    }
+    private async void OnDataDescOptionChanged2()
+    {
+
+        this.lstDataName2 = await orgFieldService.GetDataname(LeftDataDescValue);
 
 
 
@@ -348,6 +368,26 @@
     private async void OnDataNameOptionChanged()
     {
         BindSearchDTO();
+    }
+
+    private async void OnDataNameOptionChanged2()
+    {
+        if (!String.IsNullOrEmpty(this.LeftDataNameValue))
+        {
+            var lst       = await orgFieldService.GetFieldname(this.LeftDataNameValue, this.LeftDataDescValue);
+            lstFieldName2 = lst.Take(1).ToList<String>();
+        }
+        else
+        {
+            lstFieldName2 = new List<string>()
+                        {
+                            "字段1",
+                            "字段2",
+                            "字段3"
+
+                        };
+        }
+       // BindSearchDTO();
     }
 
 
@@ -390,8 +430,11 @@
         //01 获取查询数据
         var _lstSearchDTO = this.GetRightSearchDTO();
         var lstData       = await mService.GetAllList(this.SelectDataDescValue, this.SelectDataNameValue,
-            _lstSearchDTO);
+            _lstSearchDTO,this.LeftDataDescValue,this.LeftDataNameValue,this.LeftFieldNameValue,
+        this.LeftOutFieldNameValue);
+
         xlsFileService.ExportFile(this.lstFieldName, this.SelectDataNameValue, lstData);
+
         await dlg.Alert("导出完成", "提示", new AlertOptions() { OkButtonText = "确定" });
      
 
@@ -399,7 +442,7 @@
 
     private String LeftFieldNameValue  = "";
     private String LeftConditionValue  = "";
-    private String OutFieldNameValue  = "";
+    private String LeftOutFieldNameValue  = "";
     private String LeftDataNameValue = "";
     private string LeftDataDescValue = "";
     //显示高级搜索窗口
@@ -414,7 +457,7 @@
         if ((bool)dlgResult)
         {
             dlg.Close();
-            var blnDelete = await mService.DeleteAll();
+            var blnDelete = await mService.DeleteAll(this.SelectDataDescValue,this.SelectDataNameValue);
             var info = blnDelete ? "删除成功" : "删除失败";
             await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
             await SearchData();

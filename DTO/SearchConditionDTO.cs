@@ -38,8 +38,9 @@
         public static List<SearchConditionDTO> GetOut()
         {
             var lst = new List<SearchConditionDTO>() {
-                      new SearchConditionDTO(){Name = "在范围",Mark = "include"},
-                      new SearchConditionDTO(){Name = "不在范围",Mark = "not include"},
+                        new SearchConditionDTO(){Name = "在范围",Mark = "include"},
+                        new SearchConditionDTO(){Name = "不在范围",Mark = "not include"
+                      }
                        
                 };
 

@@ -61,10 +61,15 @@ namespace my_orange_easyxls.Service
                         {  
 
                             var cell          = worksheet.Cells[row, col]; 
-                            string fieldValue = cell.Value.ToString(); //字段值 
+                            string fieldValue = cell.Value!=null && string.IsNullOrEmpty(cell.Value.ToString()) ==false ?cell.Value?.ToString():"";
+                            if (fieldValue == "") { continue; }
+                            //字段值 
                             string fieldName  = "Field"+col.ToString();//字段名
                             item              = (Org_dataDTO)MyClassConvert.setClassPropertyValueFromSourceToDest(fieldName,fieldValue,item);  
                         }
+
+                        if (String.IsNullOrEmpty(item.Field1)) { continue; }
+
                         item.Dataname    = sheetName;
                         item.Datadesc    = dataDesc;
                         item.State       =  0 ;

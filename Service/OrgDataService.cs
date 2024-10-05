@@ -88,9 +88,19 @@ namespace my_orange_easyxls.Service
 
         }
 
-        public async Task<bool> DeleteAll()
+        public async Task<bool> DeleteAll(string dataDesc,string dataName)
         {
-            await _context.Database.ExecuteSqlRawAsync("delete from org_data");
+            string strSql = "delete from org_data where ";
+            if (string.IsNullOrEmpty(dataDesc) == false)
+            {
+                strSql += " dataDesc='" + dataDesc + "' and ";
+            }
+            if (string.IsNullOrEmpty(dataName) == false)
+            {
+                strSql += " dataame='" + dataName + "' and ";
+            }
+            strSql += " Id>0";
+            await _context.Database.ExecuteSqlRawAsync(strSql);
             return true;
         }
 
@@ -301,63 +311,561 @@ namespace my_orange_easyxls.Service
 
 
         }
+
+        private IQueryable<Org_dataDTO> GetJoin(IQueryable<Org_dataDTO> q, IQueryable<Org_dataDTO> q2,string leftFieldNameValue,
+            string leftOutFieldNameValue)
+        {
+            switch (leftFieldNameValue)
+            {
+                case "Field2":
+                    return from a in q
+                           join b in q2
+                           on a.Field2 equals b.Field1
+                           select a;
+                case "Field3":
+                    return from a in q
+                           join b in q2
+                           on a.Field3 equals b.Field1
+                           select a;
+                case "Field4":
+                    return from a in q
+                           join b in q2
+                           on a.Field4 equals b.Field1
+                           select a;
+                case "Field5":
+                    return from a in q
+                           join b in q2
+                           on a.Field5 equals b.Field1
+                           select a;
+                case "Field6":
+                    return from a in q
+                           join b in q2
+                           on a.Field6 equals b.Field1
+                           select a;
+                case "Field7":
+                    return from a in q
+                           join b in q2
+                           on a.Field7 equals b.Field1
+                           select a;
+                case "Field8":
+                    return from a in q
+                           join b in q2
+                           on a.Field8 equals b.Field1
+                           select a;
+                case "Field9":
+                    return from a in q
+                           join b in q2
+                           on a.Field9 equals b.Field1
+                           select a;
+                case "Field10":
+                    return from a in q
+                           join b in q2
+                           on a.Field10 equals b.Field1
+                           select a;
+                case "Field11":
+                    return from a in q
+                           join b in q2
+                           on a.Field11 equals b.Field1
+                           select a;
+                case "Field12":
+                    return from a in q
+                           join b in q2
+                           on a.Field12 equals b.Field1
+                           select a;
+                case "Field13":
+                    return from a in q
+                           join b in q2
+                           on a.Field13 equals b.Field1
+                           select a;
+                case "Field14":
+                    return from a in q
+                           join b in q2
+                           on a.Field14 equals b.Field1
+                           select a;
+                case "Field15":
+                    return from a in q
+                           join b in q2
+                           on a.Field15 equals b.Field1
+                           select a;
+                case "Field16":
+                    return from a in q
+                           join b in q2
+                           on a.Field16 equals b.Field1
+                           select a;
+                case "Field17":
+                    return from a in q
+                           join b in q2
+                           on a.Field17 equals b.Field1
+                           select a;
+                case "Field18":
+                    return from a in q
+                           join b in q2
+                           on a.Field18 equals b.Field1
+                           select a;
+                case "Field19":
+                    return from a in q
+                           join b in q2
+                           on a.Field19 equals b.Field1
+                           select a;
+                case "Field20":
+                    return from a in q
+                           join b in q2
+                           on a.Field20 equals b.Field1
+                           select a;
+                case "Field21":
+                    return from a in q
+                           join b in q2
+                           on a.Field21 equals b.Field1
+                           select a;
+                case "Field22":
+                    return from a in q
+                           join b in q2
+                           on a.Field22 equals b.Field1
+                           select a;
+                case "Field23":
+                    return from a in q
+                           join b in q2
+                           on a.Field23 equals b.Field1
+                           select a;
+                case "Field24":
+                    return from a in q
+                           join b in q2
+                           on a.Field24 equals b.Field1
+                           select a;
+                case "Field25":
+                    return from a in q
+                           join b in q2
+                           on a.Field25 equals b.Field1
+                           select a;
+                case "Field26":
+                    return from a in q
+                           join b in q2
+                           on a.Field26 equals b.Field1
+                           select a;
+                case "Field27":
+                    return from a in q
+                           join b in q2
+                           on a.Field27 equals b.Field1
+                           select a;
+                case "Field28":
+                    return from a in q
+                           join b in q2
+                           on a.Field28 equals b.Field1
+                           select a;
+                case "Field29":
+                    return from a in q
+                           join b in q2
+                           on a.Field29 equals b.Field1
+                           select a;
+                case "Field30":
+                    return from a in q
+                           join b in q2
+                           on a.Field30 equals b.Field1
+                           select a;
+                case "Field31":
+                    return from a in q
+                           join b in q2
+                           on a.Field31 equals b.Field1
+                           select a;
+                case "Field32":
+                    return from a in q
+                           join b in q2
+                           on a.Field32 equals b.Field1
+                           select a;
+                case "Field33":
+                    return from a in q
+                           join b in q2
+                           on a.Field33 equals b.Field1
+                           select a;
+                case "Field34":
+                    return from a in q
+                           join b in q2
+                           on a.Field34 equals b.Field1
+                           select a;
+                case "Field35":
+                    return from a in q
+                           join b in q2
+                           on a.Field35 equals b.Field1
+                           select a;
+                case "Field36":
+                    return from a in q
+                           join b in q2
+                           on a.Field36 equals b.Field1
+                           select a;
+                case "Field37":
+                    return from a in q
+                           join b in q2
+                           on a.Field37 equals b.Field1
+                           select a;
+                case "Field38":
+                    return from a in q
+                           join b in q2
+                           on a.Field38 equals b.Field1
+                           select a;
+                case "Field39":
+                    return from a in q
+                           join b in q2
+                           on a.Field39 equals b.Field1
+                           select a;
+                case "Field40":
+                    return from a in q
+                           join b in q2
+                           on a.Field40 equals b.Field1
+                           select a;
+                case "Field41":
+                    return from a in q
+                           join b in q2
+                           on a.Field41 equals b.Field1
+                           select a;
+                case "Field42":
+                    return from a in q
+                           join b in q2
+                           on a.Field42 equals b.Field1
+                           select a;
+                case "Field43":
+                    return from a in q
+                           join b in q2
+                           on a.Field43 equals b.Field1
+                           select a;
+                case "Field44":
+                    return from a in q
+                           join b in q2
+                           on a.Field44 equals b.Field1
+                           select a;
+                case "Field45":
+                    return from a in q
+                           join b in q2
+                           on a.Field45 equals b.Field1
+                           select a;
+                case "Field46":
+                    return from a in q
+                           join b in q2
+                           on a.Field46 equals b.Field1
+                           select a;
+                case "Field47":
+                    return from a in q
+                           join b in q2
+                           on a.Field47 equals b.Field1
+                           select a;
+                case "Field48":
+                    return from a in q
+                           join b in q2
+                           on a.Field48 equals b.Field1
+                           select a;
+                case "Field49":
+                    return from a in q
+                           join b in q2
+                           on a.Field49 equals b.Field1
+                           select a;
+                case "Field50":
+                    return from a in q
+                           join b in q2
+                           on a.Field50 equals b.Field1
+                           select a;
+                case "Field51":
+                    return from a in q
+                           join b in q2
+                           on a.Field51 equals b.Field1
+                           select a;
+                case "Field52":
+                    return from a in q
+                           join b in q2
+                           on a.Field52 equals b.Field1
+                           select a;
+                case "Field53":
+                    return from a in q
+                           join b in q2
+                           on a.Field53 equals b.Field1
+                           select a;
+                case "Field54":
+                    return from a in q
+                           join b in q2
+                           on a.Field54 equals b.Field1
+                           select a;
+                case "Field55":
+                    return from a in q
+                           join b in q2
+                           on a.Field55 equals b.Field1
+                           select a;
+                case "Field56":
+                    return from a in q
+                           join b in q2
+                           on a.Field56 equals b.Field1
+                           select a;
+                case "Field57":
+                    return from a in q
+                           join b in q2
+                           on a.Field57 equals b.Field1
+                           select a;
+                case "Field58":
+                    return from a in q
+                           join b in q2
+                           on a.Field58 equals b.Field1
+                           select a;
+                case "Field59":
+                    return from a in q
+                           join b in q2
+                           on a.Field59 equals b.Field1
+                           select a;
+                case "Field60":
+                    return from a in q
+                           join b in q2
+                           on a.Field60 equals b.Field1
+                           select a;
+                case "Field61":
+                    return from a in q
+                           join b in q2
+                           on a.Field61 equals b.Field1
+                           select a;
+                case "Field62":
+                    return from a in q
+                           join b in q2
+                           on a.Field62 equals b.Field1
+                           select a;
+                case "Field63":
+                    return from a in q
+                           join b in q2
+                           on a.Field63 equals b.Field1
+                           select a;
+                case "Field64":
+                    return from a in q
+                           join b in q2
+                           on a.Field64 equals b.Field1
+                           select a;
+                case "Field65":
+                    return from a in q
+                           join b in q2
+                           on a.Field65 equals b.Field1
+                           select a;
+                case "Field66":
+                    return from a in q
+                           join b in q2
+                           on a.Field66 equals b.Field1
+                           select a;
+                case "Field67":
+                    return from a in q
+                           join b in q2
+                           on a.Field67 equals b.Field1
+                           select a;
+                case "Field68":
+                    return from a in q
+                           join b in q2
+                           on a.Field68 equals b.Field1
+                           select a;
+                case "Field69":
+                    return from a in q
+                           join b in q2
+                           on a.Field69 equals b.Field1
+                           select a;
+                case "Field70":
+                    return from a in q
+                           join b in q2
+                           on a.Field70 equals b.Field1
+                           select a;
+                case "Field71":
+                    return from a in q
+                           join b in q2
+                           on a.Field71 equals b.Field1
+                           select a;
+                case "Field72":
+                    return from a in q
+                           join b in q2
+                           on a.Field72 equals b.Field1
+                           select a;
+                case "Field73":
+                    return from a in q
+                           join b in q2
+                           on a.Field73 equals b.Field1
+                           select a;
+                case "Field74":
+                    return from a in q
+                           join b in q2
+                           on a.Field74 equals b.Field1
+                           select a;
+                case "Field75":
+                    return from a in q
+                           join b in q2
+                           on a.Field75 equals b.Field1
+                           select a;
+                case "Field76":
+                    return from a in q
+                           join b in q2
+                           on a.Field76 equals b.Field1
+                           select a;
+                case "Field77":
+                    return from a in q
+                           join b in q2
+                           on a.Field77 equals b.Field1
+                           select a;
+                case "Field78":
+                    return from a in q
+                           join b in q2
+                           on a.Field78 equals b.Field1
+                           select a;
+                case "Field79":
+                    return from a in q
+                           join b in q2
+                           on a.Field79 equals b.Field1
+                           select a;
+                case "Field80":
+                    return from a in q
+                           join b in q2
+                           on a.Field80 equals b.Field1
+                           select a;
+                case "Field81":
+                    return from a in q
+                           join b in q2
+                           on a.Field81 equals b.Field1
+                           select a;
+                case "Field82":
+                    return from a in q
+                           join b in q2
+                           on a.Field82 equals b.Field1
+                           select a;
+                case "Field83":
+                    return from a in q
+                           join b in q2
+                           on a.Field83 equals b.Field1
+                           select a;
+                case "Field84":
+                    return from a in q
+                           join b in q2
+                           on a.Field84 equals b.Field1
+                           select a;
+                case "Field85":
+                    return from a in q
+                           join b in q2
+                           on a.Field85 equals b.Field1
+                           select a;
+                case "Field86":
+                    return from a in q
+                           join b in q2
+                           on a.Field86 equals b.Field1
+                           select a;
+                case "Field87":
+                    return from a in q
+                           join b in q2
+                           on a.Field87 equals b.Field1
+                           select a;
+                case "Field88":
+                    return from a in q
+                           join b in q2
+                           on a.Field88 equals b.Field1
+                           select a;
+                case "Field89":
+                    return from a in q
+                           join b in q2
+                           on a.Field89 equals b.Field1
+                           select a;
+                case "Field90":
+                    return from a in q
+                           join b in q2
+                           on a.Field90 equals b.Field1
+                           select a;
+                case "Field91":
+                    return from a in q
+                           join b in q2
+                           on a.Field91 equals b.Field1
+                           select a;
+                case "Field92":
+                    return from a in q
+                           join b in q2
+                           on a.Field92 equals b.Field1
+                           select a;
+                case "Field93":
+                    return from a in q
+                           join b in q2
+                           on a.Field93 equals b.Field1
+                           select a;
+                case "Field94":
+                    return from a in q
+                           join b in q2
+                           on a.Field94 equals b.Field1
+                           select a;
+                case "Field95":
+                    return from a in q
+                           join b in q2
+                           on a.Field95 equals b.Field1
+                           select a;
+                case "Field96":
+                    return from a in q
+                           join b in q2
+                           on a.Field96 equals b.Field1
+                           select a;
+                case "Field97":
+                    return from a in q
+                           join b in q2
+                           on a.Field97 equals b.Field1
+                           select a;
+                case "Field98":
+                    return from a in q
+                           join b in q2
+                           on a.Field98 equals b.Field1
+                           select a;
+                case "Field99":
+                    return from a in q
+                           join b in q2
+                           on a.Field99 equals b.Field1
+                           select a;
+                case "Field100":
+                    return from a in q
+                           join b in q2
+                           on a.Field100 equals b.Field1
+                           select a;
+                default:
+                    return from a in q
+                           join b in q2
+                           on a.Field1 equals b.Field1
+                           select a;
+            }
+        }
+
+
         /// <summary>
         /// 获取数据列表
         /// </summary>
         /// <param name="searchDTO">查询对象：字段名称和值</param>
         /// <param name="pageNumber">当前页码</param>
         /// <returns></returns>
-        public async Task<SearchResultDTO<List<Org_dataDTO>>> GetList(String dataDesc,string dataName,
+        public async Task<SearchResultDTO<List<Org_dataDTO>>> GetList(String dataDesc, string dataName,
             SearchDTO[] searchDTO,
-            int pageNumber)
+            int pageNumber,string leftDataDesc,string leftDataName,string leftFieldNameValue,string leftOutFieldNameValue)
         {
-            IQueryable<Org_dataDTO> query = this.GetProjectQuery();
 
-            string where = "";
-            if (string.IsNullOrEmpty(dataName) && string.IsNullOrEmpty(dataDesc))
+            if (string.IsNullOrEmpty(leftDataDesc)
+                 || string.IsNullOrEmpty(leftFieldNameValue)
+                 || string.IsNullOrEmpty(leftOutFieldNameValue))
             {
-                where = " Id>0";
+
+                return await GetList(dataDesc, dataName, searchDTO, pageNumber);
             }
-            else
-            {
-                if (!string.IsNullOrEmpty(dataDesc))
-                {
-                    where = "Datadesc=\"" + dataDesc + "\" and ";
-                }
-                 if (!string.IsNullOrEmpty(dataName))
-                {
-                    where += "Dataname=\"" + dataName + "\" and ";
-                }
+            //001 拼凑查询条件
+            IQueryable<Org_dataDTO> query  = this.GetProjectQuery();
+            string where                   =  this.GetWhere(dataDesc, dataName, searchDTO);      
+            var q                          = query.Where(where);
 
-                where += this.GetWhereFromSearchDTOs(searchDTO);
+            IQueryable<Org_dataDTO> query2 = this.GetProjectQuery();
+            var q2                         = query2.Where("Datadesc=\"" + leftDataDesc + "\" and " + "Dataname=\"" + leftDataName + "\" ");
+            string where2                  = "Datadesc='" + leftDataDesc + "' and " + "Dataname='" + leftDataName + "'";
+            var lstAll                     = this.GetJoin(q, q2, leftFieldNameValue, leftOutFieldNameValue);
 
-                where += " Id>0";
-            }
-            var q = query.Where(where);
-            int totalCount = await q.CountAsync();
-            int skip = MyPage.GetSkip(pageNumber, MyPage.PageSize);
-            var lst = await q.OrderByDescending(x => x.Id).Skip(skip).Take(MyPage.PageSize).ToListAsync();
-            var pageHtml = MyPage.GetSplitPageHtml(totalCount, pageNumber, MyPage.PageSize);
+            //002获取数据
+            int totalCount                 = await lstAll.CountAsync();
+            int skip                       = MyPage.GetSkip(pageNumber, MyPage.PageSize);
+            var lst                        = await lstAll.OrderByDescending(x => x.Id).Skip(skip).Take(MyPage.PageSize).ToListAsync<Org_dataDTO>();
+            var pageHtml                   = MyPage.GetSplitPageHtml(totalCount, pageNumber, MyPage.PageSize);
 
-            var searchResultDTO = new SearchResultDTO<List<Org_dataDTO>>(lst, pageHtml, totalCount);
+            var searchResultDTO            = new SearchResultDTO<List<Org_dataDTO>>(lst, pageHtml, totalCount);
 
             this._logger.LogInformation("This is Test");
 
             return searchResultDTO;
 
-
+    
         }
 
-        /// <summary>
-        /// 获取数据列表
-        /// </summary>
-        /// <param name="searchDTO">查询对象：字段名称和值</param>
-        /// <param name="pageNumber">当前页码</param>
-        /// <returns></returns>
-        public async Task<List<Org_dataDTO>> GetAllList(String dataDesc, string dataName,
-            SearchDTO[] searchDTO)
+        private string  GetWhere(string dataDesc, string dataName, SearchDTO[] searchDTO)
         {
-            IQueryable<Org_dataDTO> query = this.GetProjectQuery();
             string where = "";
             if (string.IsNullOrEmpty(dataName) && string.IsNullOrEmpty(dataDesc))
             {
@@ -378,12 +886,87 @@ namespace my_orange_easyxls.Service
 
                 where += " Id>0";
             }
-            var q = query.Where(where);
-            var lst = await q.OrderByDescending(x => x.Id).ToListAsync();
-             
 
+            return where;
+        }
+        /// <summary>
+        /// 获取数据列表
+        /// </summary>
+        /// <param name="searchDTO">查询对象：字段名称和值</param>
+        /// <param name="pageNumber">当前页码</param>
+        /// <returns></returns>
+        public async Task<SearchResultDTO<List<Org_dataDTO>>> GetList(String dataDesc,string dataName,
+            SearchDTO[] searchDTO,
+            int pageNumber)
+        {
+            IQueryable<Org_dataDTO> query = this.GetProjectQuery();
+            string where                  = this.GetWhere(dataDesc, dataName, searchDTO);
+            var q                         = query.Where(where);
+            int totalCount                = await q.CountAsync();
+            int skip                      = MyPage.GetSkip(pageNumber, MyPage.PageSize);
+            var lst                       = await q.OrderByDescending(x => x.Id).Skip(skip).Take(MyPage.PageSize).ToListAsync();
+            var pageHtml                  = MyPage.GetSplitPageHtml(totalCount, pageNumber, MyPage.PageSize);
+            var searchResultDTO           = new SearchResultDTO<List<Org_dataDTO>>(lst, pageHtml, totalCount);
+
+            this._logger.LogInformation("This is Test");
+
+            return searchResultDTO;
+
+
+        }
+
+        /// <summary>
+        /// 获取数据列表
+        /// </summary>
+        /// <param name="searchDTO">查询对象：字段名称和值</param>
+        /// <param name="pageNumber">当前页码</param>
+        /// <returns></returns>
+        public async Task<List<Org_dataDTO>> GetAllList(String dataDesc, string dataName,
+            SearchDTO[] searchDTO)
+        {
+            IQueryable<Org_dataDTO> query = this.GetProjectQuery();
+            string where    = this.GetWhere(dataDesc, dataName, searchDTO);
+            var q           = query.Where(where);
+            var lst         = await q.OrderByDescending(x => x.Id).ToListAsync();
             return lst;
 
+
+        }
+
+        /// <summary>
+        /// 获取查询数据
+        /// </summary>
+        /// <param name="dataDesc"></param>
+        /// <param name="dataName"></param>
+        /// <param name="searchDTO"></param>
+        /// <param name="leftDataDesc"></param>
+        /// <param name="leftDataName"></param>
+        /// <param name="leftFieldNameValue"></param>
+        /// <param name="leftOutFieldNameValue"></param>
+        /// <returns></returns>
+        public async Task<List<Org_dataDTO>> GetAllList(String dataDesc, string dataName,
+            SearchDTO[] searchDTO,string leftDataDesc, string leftDataName, string leftFieldNameValue, string leftOutFieldNameValue)
+        {
+            if (string.IsNullOrEmpty(leftDataDesc)
+           || string.IsNullOrEmpty(leftFieldNameValue)
+           || string.IsNullOrEmpty(leftOutFieldNameValue))
+            {
+
+                return await GetAllList(dataDesc, dataName, searchDTO);
+            }
+
+            IQueryable<Org_dataDTO> query = this.GetProjectQuery();
+            string where                  = this.GetWhere(dataDesc, dataName, searchDTO);
+
+            var q                         = query.Where(where);
+            IQueryable<Org_dataDTO> query2 = this.GetProjectQuery();
+            var q2                        = query2.Where("Datadesc=\"" + leftDataDesc + "\" and " + "Dataname=\"" + leftDataName + "\" ");
+            string where2                 = "Datadesc='" + leftDataDesc + "' and " + "Dataname='" + leftDataName + "'";
+
+            var lstAll = this.GetJoin(q, q2, leftFieldNameValue, leftOutFieldNameValue);
+            var lst = await lstAll.OrderByDescending(x => x.Id).ToListAsync<Org_dataDTO>();
+
+            return lst;
 
         }
 
