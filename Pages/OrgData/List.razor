@@ -387,7 +387,7 @@
 
                         };
         }
-       // BindSearchDTO();
+        // BindSearchDTO();
     }
 
 
@@ -429,11 +429,36 @@
     {
         //01 获取查询数据
         var _lstSearchDTO = this.GetRightSearchDTO();
-        var lstData       = await mService.GetAllList(this.SelectDataDescValue, this.SelectDataNameValue,
-            _lstSearchDTO,this.LeftDataDescValue,this.LeftDataNameValue,this.LeftFieldNameValue,
-        this.LeftOutFieldNameValue);
+        if (this.IsApplyAllSheet == false)
+        {
+            var lstData = await mService.GetAllList(this.SelectDataDescValue, this.SelectDataNameValue,
+            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue, this.LeftFieldNameValue,
+            this.LeftOutFieldNameValue);
 
-        xlsFileService.ExportFile(this.lstFieldName, this.SelectDataNameValue, lstData);
+            xlsFileService.ExportFile(this.lstFieldName, this.SelectDataNameValue, lstData);
+
+        }
+        else
+        {
+            List<ExportDataDTO> lstExport = new List<ExportDataDTO>();
+            foreach (var s in lstDataName)
+            {
+                var item = new ExportDataDTO();
+                var lstData = await mService.GetAllList(this.SelectDataDescValue, s,
+                            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue, this.LeftFieldNameValue,
+                            this.LeftOutFieldNameValue);
+                var lstHeader = await orgFieldService.GetFieldname(s, this.SelectDataDescValue);
+                item.SheetName = s;
+                item.lstHeader = lstHeader;
+                item.lstData = lstData;
+                lstExport.Add(item);
+            }
+           
+            xlsFileService.ExportFile(lstExport);
+            
+
+        }
+
 
         await dlg.Alert("导出完成", "提示", new AlertOptions() { OkButtonText = "确定" });
      

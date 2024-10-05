@@ -87,9 +87,56 @@ namespace my_orange_easyxls.Service
 
 
         }
+        /// <summary>
+        /// 导出所有工作簿
+        /// </summary>
+        /// <param name="lstExport"></param>
+        public void ExportFile(List<ExportDataDTO> lstExport)
+        {
+
+            string fileName = fileUploadService.GetExportFileName();
+            using (ExcelPackage excelPackage = new ExcelPackage())
+            {
+                foreach( var item in lstExport) {
+
+                    var sheetName = item.SheetName;
+                    // 添加一个新的工作表  
+                    ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add(sheetName);
+
+                    ///01 写入第一行作为表头
+                    int colIndex = 1;
+                        var lstHeader = item.lstHeader;
+                    foreach (var head in lstHeader)
+                    {
+                        worksheet.Cells[1, colIndex].Value = head;
+                        colIndex++;
+                    }
+
+                    //02开始写入数据
+                    var lstData = item.lstData;
+                    for (int i = 0; i < lstData.Count; i++)
+                    {
+                        int row = i + 2;
+                        for (int col = 0; col < lstHeader.Count; col++)
+                        {
+
+                            var cellValue = MyClassConvert.getClassPropertyValueFromSourceToDest("Field" + (col + 1),
+                                 lstData[i]);
+                            worksheet.Cells[row, col + 1].Value = cellValue;
+                        }
+
+                    }
 
 
-    public void ExportFile(List<String> lstHeader,string sheetName, List<Org_dataDTO> lstData) {
+                }
+                // 保存Excel文件  
+                FileInfo file = new FileInfo(fileName);
+                excelPackage.SaveAs(file);
+            }
+
+        }
+
+        public void ExportFile(List<String> lstHeader,string sheetName, List<Org_dataDTO> lstData) {
 
             string fileName = fileUploadService.GetExportFileName();
             using (ExcelPackage excelPackage = new ExcelPackage())
