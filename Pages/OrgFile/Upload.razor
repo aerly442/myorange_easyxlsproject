@@ -10,7 +10,7 @@
 <PageTitle>上传文件</PageTitle>
 <RadzenDialog></RadzenDialog>
 <div class="container mt-5">
-    <h2>上传您的Excel文件</h2>
+    <h2>上传您的Excel文件,必须是xlsx格式文件</h2>
     <div class="mb-3">
         <label for="projectInfo" class="form-label"></label>    
         <FileUpload  OnUploadFinished="HandleFileUploadEvent"></FileUpload>
@@ -20,7 +20,7 @@
     <div class="mb-3">
      </div>
   
-    <button  class="btn btn-primary" @onclick="SaveData">保存</button>
+    <button class="btn btn-primary @(IsFinished?"":"visually-hidden")" @onclick="SaveData">保存</button>
 
 
 </div>
@@ -42,6 +42,7 @@
     private List<FileDTO> lstFiles = new List<FileDTO>();
     //private List<ProjectDTO> Projects;
 
+    private bool IsFinished = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,6 +53,7 @@
     private void HandleFileUploadEvent(List<FileDTO> _lstFiles)
     {
         this.lstFiles = _lstFiles;
+        this.IsFinished = true;
         // 处理来自子组件的数据
     }
 
