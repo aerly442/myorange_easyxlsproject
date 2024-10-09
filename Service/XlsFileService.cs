@@ -57,6 +57,11 @@ namespace my_orange_easyxls.Service
                     string dataName = sheetName;
                     int    rowCount = 0;
 
+                    if (worksheet.Dimension == null || worksheet.Dimension.Columns == 0)
+                    {
+                        continue;
+                    }
+
                     for (int row=2;row<=worksheet.Dimension.End.Row;row++){
 
                         Org_dataDTO item = new Org_dataDTO();
@@ -123,6 +128,11 @@ namespace my_orange_easyxls.Service
                     string sheetName = worksheet.Name;  //工作簿的名称                   
                     string dataDesc = GetXlsFileName(f.Filename);
                     string dataName = sheetName;
+
+                    if (worksheet.Dimension == null || worksheet.Dimension.Columns == 0)
+                    {
+                        continue;
+                    }
 
                     for (int row=2;row<=worksheet.Dimension.End.Row;row++){
 
@@ -266,6 +276,12 @@ namespace my_orange_easyxls.Service
                     string sheetName = worksheet.Name;  //工作簿的名称                   
                     string dataDesc  = GetXlsFileName(f.Filename);
                     string dataName  = sheetName;
+
+                    if (worksheet.Dimension == null || worksheet.Dimension.Columns == 0)
+                    {
+                        continue;
+                    }
+
                     for (int col = 1; col <= worksheet.Dimension.Columns; col++)  
                     {  
 
