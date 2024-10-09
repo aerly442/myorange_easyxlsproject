@@ -25,6 +25,45 @@ namespace my_orange_easyxls.Service
             
         }
 
+       public bool Save2(List<Org_dataDTO> lstData )
+        {
+
+            if (lstData!=null && lstData.Count > 0)
+            {
+
+                List<Org_data> lstModels = new List<Org_data>();
+                int i = 0;
+                //002 再保存
+                foreach(var p in lstData)
+                {
+                    var data = new Org_data();
+                    _context.Entry(data).CurrentValues.SetValues(p);
+                    lstModels.Add(data);
+                    if (i % 50 == 0 && i>50)
+                    {
+                        _context.OrgData.AddRange(lstModels);
+                         _context.SaveChanges();
+                        lstModels.Clear();
+                    }
+
+                    i = i++;
+
+                }
+
+                if (lstModels.Count > 0)
+                {
+                    _context.OrgData.AddRange(lstModels);
+                     _context.SaveChanges();
+                }
+
+  
+
+            }
+
+            return true ;
+
+
+        }
         public async Task<bool> Save(List<Org_dataDTO> lstData )
         {
 

@@ -14,6 +14,8 @@ namespace my_orange_easyxls.Service
 
         private readonly IWebHostEnvironment? _hostEnvironment;
         private readonly FileUploadService fileUploadService;
+
+        public delegate bool DelegateSaveData(List<Org_dataDTO> lst);
         //IWebHostEnvironment Environment
         public XlsFileService(IWebHostEnvironment hostEnvironment,FileUploadService _fileUploadService)
         {
@@ -35,6 +37,74 @@ namespace my_orange_easyxls.Service
 
         }
 
+          public void GetOrgDataByFile(Org_fileDTO f,int org_fieldid,int org_fileid,DelegateSaveData saveData){
+
+            string path     = _hostEnvironment.WebRootPath;
+            string filePath = path +f.FileUrl;
+            FileInfo fileInfo = new FileInfo(filePath); 
+
+
+             List<Org_dataDTO> lstFile = new  List<Org_dataDTO>();
+  
+            // 使用 EPPlus 打开 Excel 包  
+            using (ExcelPackage package = new ExcelPackage(fileInfo))  
+            {
+                List<string> sheetNames = new List<string>();  
+                foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)  
+                {
+                    string sheetName = worksheet.Name;  //工作簿的名称                   
+                    string dataDesc = GetXlsFileName(f.Filename);
+                    string dataName = sheetName;
+                    int    rowCount = 0;
+
+                    for (int row=2;row<=worksheet.Dimension.End.Row;row++){
+
+                        Org_dataDTO item = new Org_dataDTO();
+                        for (int col = 1; col <= worksheet.Dimension.Columns; col++)  
+                        {  
+
+                            var cell          = worksheet.Cells[row, col]; 
+                            string fieldValue = cell.Value!=null && string.IsNullOrEmpty(cell.Value.ToString()) ==false ?cell.Value?.ToString():"";
+                            if (fieldValue == "") { continue; }
+                            //字段值 
+                            string fieldName  = "Field"+col.ToString();//字段名
+                            item              = (Org_dataDTO)MyClassConvert.setClassPropertyValueFromSourceToDest(fieldName,fieldValue,item);  
+                        }
+
+                        if (String.IsNullOrEmpty(item.Field1)) { continue; }
+
+                        item.Dataname    = sheetName;
+                        item.Datadesc    = dataDesc;
+                        item.State       =  0 ;
+                        item.Createtime  = DateTime.Now;   
+                        lstFile.Add(item);
+
+                        if (rowCount>100){
+
+                            saveData(lstFile);
+                            lstFile.Clear();
+                            rowCount = 0;
+                            
+                        }
+                    
+                        rowCount = rowCount+1;
+                    }
+
+
+                }  
+              
+            
+
+            } 
+
+            if (lstFile.Count >0){
+                 saveData(lstFile);
+            }
+
+            //return lstFile; 
+
+
+        }
         public List<Org_dataDTO> GetOrgDataByFile(Org_fileDTO f,int org_fieldid,int org_fileid){
 
             string path     = _hostEnvironment.WebRootPath;

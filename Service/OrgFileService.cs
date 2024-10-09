@@ -100,8 +100,10 @@ namespace my_orange_easyxls.Service
              //002 保存xls数据
              if (blnSave == true ){
 
-                  var lstOrgData      = _xlsFileService.GetOrgDataByFile(p,0,0);                 
-                  await _orgDataService.Save(lstOrgData);
+                 _xlsFileService.GetOrgDataByFile(p,0,0,_orgDataService.Save2);                 
+                 //_orgDataService.Save(lstOrgData);
+                 //var lstOrgData      = _xlsFileService.GetOrgDataByFile(p,0,0);                 
+                //await _orgDataService.Save(lstOrgData);
 
              }
           
