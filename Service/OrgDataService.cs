@@ -332,19 +332,24 @@ namespace my_orange_easyxls.Service
 
         private string GetContiditon(string strValue,string strMark)
         {
-            if (string.IsNullOrEmpty(strMark) || 
-                strMark.IndexOf("contains") > -1)
+            string where = "";
+            if (  strMark.IndexOf("contains") > -1)
             {
-                return ".contains(\"" + strValue + "\") and ";
+                where =  ".contains(\"" + strValue + "\") and ";
+                this._logger.LogInformation("This is Test strValue:"+strValue+",strMark:"+strMark);
+                return where ;
             }
-            if (string.IsNullOrEmpty(strMark) ||
-                    strMark.IndexOf("in") > -1)
+            if (strMark.IndexOf("in") > -1)
             {
                 strValue = strValue.IndexOf(",")>0?strValue.Replace(",","\",\""):strValue;
-                return " "+ strMark+" (\"" + strValue + "\") and ";
+                where =  " "+ strMark+" (\"" + strValue + "\") and ";
+                this._logger.LogInformation("This is Test strValue:"+strValue+",strMark:"+strMark);
+                return where ;
             }
 
-            return " "+strMark+"\"" + strValue + "\" and ";
+            where =  " "+strMark+"\"" + strValue + "\" and ";
+            this._logger.LogInformation("This is Test strValue:"+strValue+",strMark:"+strMark);
+            return where ;
 
         }
 
