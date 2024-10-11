@@ -173,6 +173,9 @@
                             <td> @item.Field1</td>
                             <td> @item.Field2</td>
                             <td> @item.Field3</td>
+                            <td> @item.Field4</td>
+                            <td> @item.Field5</td>
+                            <td> @item.Field6</td>
                             <td>
                                 @item.Createtime.ToString("yyyy-MM-dd")
                             </td>
@@ -275,7 +278,10 @@
                         {
                             "字段1",
                             "字段2",
-                            "字段3"
+                            "字段3",
+                            "字段4",
+                            "字段5",
+                            "字段6"
 
                         };
         }
@@ -291,7 +297,7 @@
                     };
         }
 
-        lstDisplayFieldName = lstFieldName.Take(3).ToList();
+        lstDisplayFieldName = lstFieldName.Take(6).ToList();
     }
     private SearchDTO[] GetRightSearchDTO()
     {
@@ -427,41 +433,53 @@
 
     private async Task ExportSearchData()
     {
-        //01 获取查询数据
-        var _lstSearchDTO = this.GetRightSearchDTO();
-        if (this.IsApplyAllSheet == false)
-        {
-            var lstData = await mService.GetAllList(this.SelectDataDescValue, this.SelectDataNameValue,
-            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue,  
-              this.GetSearchFieldName(this.lstFieldName,this.LeftFieldNameValue),
-            this.LeftOutFieldNameValue);
 
-            xlsFileService.ExportFile(this.lstFieldName, this.SelectDataNameValue, lstData);
+        Task.Run(async () =>
+       {
 
-        }
-        else
-        {
-            List<ExportDataDTO> lstExport = new List<ExportDataDTO>();
-            foreach (var s in lstDataName)
-            {
-                var item = new ExportDataDTO();
-                var lstData = await mService.GetAllList(this.SelectDataDescValue, s,
-                            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue, 
-                               this.GetSearchFieldName(this.lstFieldName,this.LeftFieldNameValue),
-                            this.LeftOutFieldNameValue);
-                var lstHeader = await orgFieldService.GetFieldname(s, this.SelectDataDescValue);
-                item.SheetName = s;
-                item.lstHeader = lstHeader;
-                item.lstData = lstData;
-                lstExport.Add(item);
-            }
+           var _lstSearchDTO = this.GetRightSearchDTO();
+           if (this.IsApplyAllSheet == false)
+           {
+               var lstData = await mService.GetAllList(this.SelectDataDescValue, this.SelectDataNameValue,
+                _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue,
+                this.GetSearchFieldName(this.lstFieldName, this.LeftFieldNameValue),
+                this.LeftOutFieldNameValue);
+
+               xlsFileService.ExportFile(this.lstFieldName, this.SelectDataNameValue, lstData);
+
+           }
+           else
+           {
+               List<ExportDataDTO> lstExport = new List<ExportDataDTO>();
+               foreach (var s in lstDataName)
+               {
+                   var item = new ExportDataDTO();
+                   var lstData = await mService.GetAllList(this.SelectDataDescValue, s,
+                           _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue,
+                              this.GetSearchFieldName(this.lstFieldName, this.LeftFieldNameValue),
+                           this.LeftOutFieldNameValue);
+                   var lstHeader = await orgFieldService.GetFieldname(s, this.SelectDataDescValue);
+                   item.SheetName = s;
+                   item.lstHeader = lstHeader;
+                   item.lstData = lstData;
+                   lstExport.Add(item);
+               }
+
+               xlsFileService.ExportFile(lstExport);
+
+           }
+
            
-            xlsFileService.ExportFile(lstExport);
-            
-        }
+           dlg.Close();
+           await dlg.Alert("导出完成", "提示", new AlertOptions() { OkButtonText = "确定" });
+       });
+
+        await BusyDialog();
+
+        //01 获取查询数据
 
 
-        await dlg.Alert("导出完成", "提示", new AlertOptions() { OkButtonText = "确定" });
+       // await dlg.Alert("导出完成", "提示", new AlertOptions() { OkButtonText = "确定" });
      
 
     }
@@ -489,6 +507,16 @@
             await SearchData();
 
         }
+    }
+
+
+    async Task BusyDialog()
+    {
+        await dlg.OpenAsync("", ds =>
+    @<RadzenStack AlignItems="AlignItems.Center" Gap="2rem" class="rz-p-12">
+
+        <RadzenText TextStyle="TextStyle.H6">导出中 ... </RadzenText>
+    </RadzenStack>, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
     }
 
 
