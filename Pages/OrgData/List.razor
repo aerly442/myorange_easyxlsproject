@@ -432,7 +432,8 @@
         if (this.IsApplyAllSheet == false)
         {
             var lstData = await mService.GetAllList(this.SelectDataDescValue, this.SelectDataNameValue,
-            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue, this.LeftFieldNameValue,
+            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue,  
+              this.GetSearchFieldName(this.lstFieldName,this.LeftFieldNameValue),
             this.LeftOutFieldNameValue);
 
             xlsFileService.ExportFile(this.lstFieldName, this.SelectDataNameValue, lstData);
@@ -445,7 +446,8 @@
             {
                 var item = new ExportDataDTO();
                 var lstData = await mService.GetAllList(this.SelectDataDescValue, s,
-                            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue, this.LeftFieldNameValue,
+                            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue, 
+                               this.GetSearchFieldName(this.lstFieldName,this.LeftFieldNameValue),
                             this.LeftOutFieldNameValue);
                 var lstHeader = await orgFieldService.GetFieldname(s, this.SelectDataDescValue);
                 item.SheetName = s;
@@ -456,7 +458,6 @@
            
             xlsFileService.ExportFile(lstExport);
             
-
         }
 
 

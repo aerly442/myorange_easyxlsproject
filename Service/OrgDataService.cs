@@ -1020,15 +1020,16 @@ namespace my_orange_easyxls.Service
 
             IQueryable<Org_dataDTO> query = this.GetProjectQuery();
             string where                  = this.GetWhere(dataDesc, dataName, searchDTO);
+            this._logger.LogInformation("This is Test:where:"+where);
 
             var q                         = query.Where(where);
             IQueryable<Org_dataDTO> query2 = this.GetProjectQuery();
             var q2                        = query2.Where("Datadesc=\"" + leftDataDesc + "\" and " + "Dataname=\"" + leftDataName + "\" ");
             string where2                 = "Datadesc='" + leftDataDesc + "' and " + "Dataname='" + leftDataName + "'";
-
+            this._logger.LogInformation("This is Test:leftFieldNameValue:"+leftFieldNameValue);
             var lstAll = this.GetJoin(q, q2, leftFieldNameValue, leftOutFieldNameValue);
             var lst = await lstAll.OrderByDescending(x => x.Id).ToListAsync<Org_dataDTO>();
-
+            this._logger.LogInformation("This is Test:GetAllList:"+dataName);
             return lst;
 
         }
