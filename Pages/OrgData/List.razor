@@ -453,11 +453,16 @@
                List<ExportDataDTO> lstExport = new List<ExportDataDTO>();
                foreach (var s in lstDataName)
                {
+                   //if (s != "业务活动")
+                   //{
+                   //    continue;
+                   //}
                    var item = new ExportDataDTO();
+                   var mlstField = lstFieldName = await orgFieldService.GetFieldname(s, this.SelectDataDescValue);
                    var lstData = await mService.GetAllList(this.SelectDataDescValue, s,
                            _lstSearchDTO, this.LeftDataDescValue, this.LeftDataNameValue,
-                              this.GetSearchFieldName(this.lstFieldName, this.LeftFieldNameValue),
-                           this.LeftOutFieldNameValue);
+                          this.GetSearchFieldName(mlstField, this.LeftFieldNameValue),
+                          this.LeftOutFieldNameValue);
                    var lstHeader = await orgFieldService.GetFieldname(s, this.SelectDataDescValue);
                    item.SheetName = s;
                    item.lstHeader = lstHeader;
