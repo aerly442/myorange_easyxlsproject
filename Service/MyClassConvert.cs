@@ -91,11 +91,11 @@ namespace my_orange_easyxls.Service
                     string strValue = value != null ? value.ToString() : "";
                     return strValue;
                 }
-                return "";
+                return "propertyInfo is null  fieldName:"+fieldName;
             }
             catch (Exception ex)
             {
-                return "";
+                return ex.Message+".fieldName:"+fieldName;
             }
 
         }

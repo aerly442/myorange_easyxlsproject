@@ -14,13 +14,17 @@ namespace my_orange_easyxls.Service
 
         private readonly IWebHostEnvironment? _hostEnvironment;
         private readonly FileUploadService fileUploadService;
+        private readonly ILogger<XlsFileService> _logger;
 
         public delegate bool DelegateSaveData(List<Org_dataDTO> lst);
         //IWebHostEnvironment Environment
-        public XlsFileService(IWebHostEnvironment hostEnvironment,FileUploadService _fileUploadService)
+        public XlsFileService(IWebHostEnvironment hostEnvironment,FileUploadService _fileUploadService,
+           ILogger<XlsFileService> logger
+        )
         {
             _hostEnvironment = hostEnvironment;
             fileUploadService = _fileUploadService;
+            _logger= logger ;
 
         }
 
@@ -243,6 +247,8 @@ namespace my_orange_easyxls.Service
                        var cellValue = MyClassConvert.getClassPropertyValueFromSourceToDest("Field"+(col+1),
                             lstData[i]);
                         worksheet.Cells[row, col + 1].Value = cellValue;
+                        this._logger.LogInformation("cell value :"+cellValue);
+                        this._logger.LogInformation("cell field :"+(col+1).ToString());
                     }
 
                 }
