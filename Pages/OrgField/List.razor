@@ -52,11 +52,9 @@
                 <tr>
                     <th scope="col">编号</th>                 
                     <th scope="col">文件名</th>
-                    <th scope="col">工作部</th>
+                    <th scope="col">工作簿</th>
                     <th scope="col">序号</th>
                     <th scope="col">字段名</th>
-                    <th scope="col">文件Id</th>
-
                      <th scope="col">创建时间</th>
                     <th scope="col">状态</th>
                     <th scope="col" style="width:150px">操作</th>
@@ -73,8 +71,7 @@
                             <td> @item.Dataname</td>
                             <td>@item.Fieldnum</td>
                             <td> @item.Fieldname</td>
-                            <td> @item.Org_fileid</td>
-     
+                               
                             <td>
                                 @item.Createtime.ToString("yyyy-MM-dd")
                             </td>
@@ -83,8 +80,10 @@
                             <td>
 
 
-
-                               
+                                <button style="display:none" @onclick="@(() => showDeleteDlg(item.Id))" class="btn btn-danger bt">
+                                    修改
+                                </button>
+                                |
                                 <button style="display:none" @onclick="@(() => showDeleteDlg(item.Id))" class="btn btn-danger bt">
                                     删除
                                 </button>
