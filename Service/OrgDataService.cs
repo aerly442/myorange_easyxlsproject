@@ -333,12 +333,16 @@ namespace my_orange_easyxls.Service
         private string GetContiditon(string strValue,string strMark)
         {
             string where = "";
+
+ 
+  
             if (  strMark.IndexOf("contains") > -1)
             {
                 where =  ".contains(\"" + strValue + "\") and ";
                 this._logger.LogInformation("This is Test strValue:"+strValue+",strMark:"+strMark);
                 return where ;
             }
+
             if (strMark.IndexOf("in") > -1)
             {
                 strValue = strValue.IndexOf(",")>0?strValue.Replace(",","\",\""):strValue;
@@ -346,6 +350,13 @@ namespace my_orange_easyxls.Service
                 this._logger.LogInformation("This is Test strValue:"+strValue+",strMark:"+strMark);
                 return where ;
             }
+
+            if (string.IsNullOrEmpty(strMark))
+            {
+                strMark = "=";
+            }
+
+            
 
             where =  " "+strMark+"\"" + strValue + "\" and ";
             this._logger.LogInformation("This is Test strValue:"+strValue+",strMark:"+strMark);
@@ -362,7 +373,14 @@ namespace my_orange_easyxls.Service
                 if (!string.IsNullOrEmpty(s.FieldName)
                     && !string.IsNullOrEmpty(s.SearchValue))
                 {
-                    where += s.FieldName + this.GetContiditon(s.SearchValue,s.Condition)  ;
+                    if (string.IsNullOrEmpty(s.Condition) == false && s.Condition.IndexOf("not contains") > -1)
+                    {
+                        where += "!"+s.FieldName + this.GetContiditon(s.SearchValue, s.Condition);
+                    }
+                    else
+                    {
+                        where += s.FieldName + this.GetContiditon(s.SearchValue, s.Condition);
+                    }
                 }
 
                 i = i + 1;

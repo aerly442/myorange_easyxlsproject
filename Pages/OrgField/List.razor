@@ -80,11 +80,14 @@
                             <td>
 
 
-                                <button style="display:none" @onclick="@(() => showDeleteDlg(item.Id))" class="btn btn-danger bt">
-                                    修改
-                                </button>
-                                |
-                                <button style="display:none" @onclick="@(() => showDeleteDlg(item.Id))" class="btn btn-danger bt">
+                                
+
+                                    <a href="OrgField/Edit/@item.Id" class="btn btn-primary">修改</a>
+                                    
+
+                              
+                                
+                                <button  @onclick="@(() => showDeleteDlg(item.Id))" class="btn btn-danger bt">
                                     删除
                                 </button>
 

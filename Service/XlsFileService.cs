@@ -28,6 +28,28 @@ namespace my_orange_easyxls.Service
 
         }
 
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void DeleteFile(string fileName)
+        {
+            string path = _hostEnvironment.WebRootPath;
+            string aFileName = path + fileName;
+            if (File.Exists(aFileName))
+            {
+                try
+                {
+                    File.Delete(aFileName);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+        }
+
         private string GetXlsFileName(string fileName){
 
            string[] aryFile = fileName.Split('.');
@@ -41,7 +63,7 @@ namespace my_orange_easyxls.Service
 
         }
 
-          public void GetOrgDataByFile(Org_fileDTO f,int org_fieldid,int org_fileid,DelegateSaveData saveData){
+        public void GetOrgDataByFile(Org_fileDTO f,int org_fieldid,int org_fileid,DelegateSaveData saveData){
 
             string path     = _hostEnvironment.WebRootPath;
             string filePath = path +f.FileUrl;
@@ -263,7 +285,7 @@ namespace my_orange_easyxls.Service
         }
 
     //读取xlsx文件获取工作簿名称和列明 
-    public List<Org_fieldDTO> GetOrgFieldByFile(Org_fileDTO f){
+        public List<Org_fieldDTO> GetOrgFieldByFile(Org_fileDTO f){
             
             string path     = _hostEnvironment.WebRootPath;
             string filePath = path +f.FileUrl;

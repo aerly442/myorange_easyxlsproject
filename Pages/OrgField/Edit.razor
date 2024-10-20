@@ -1,0 +1,92 @@
+﻿@page "/OrgField/Edit/{Id:int}"
+@using my_orange_easyxls.DTO
+@using my_orange_easyxls.Service
+@using my_orange_easyxls.Models
+@inject OrgFieldService mService
+@inject NavigationManager nv
+@using Microsoft.AspNetCore.Components.Web
+@inject DialogService dlg
+<RadzenDialog />
+<div class="container">
+    <div class="row" style="padding-bottom:5px">
+        <div class="col-md-5">
+            <h4>编辑字段数据</h4>
+        </div>
+        <div class="col-md-7 text-end"><a href="/OrgField/List">返回</a></div>
+    </div>
+ 
+
+    <EditForm Model="@p" OnValidSubmit="@SaveData">
+         <div class="mb-3">
+            <label for="projectName" class="form-label">文件名</label>
+                <input type="text" @bind="p.Datadesc" class="form-control "
+                       placeholder="请输入文件名">
+           
+         </div>
+        <div class="mb-3">
+            <label for="projectName" class="form-label">工作簿</label>
+            <input type="text" @bind="p.Dataname" class="form-control"
+                   placeholder="请输入工作簿">
+
+                      
+        </div>
+        <div class="mb-3">
+            <label for="projectName" class="form-label">序号</label>
+            <input type="number" @bind="p.Fieldnum" class="form-control"
+                   placeholder="请输入序号">
+
+        </div>
+
+        <div class="mb-3">
+            <label for="projectName" class="form-label">字段名</label>
+            <input type="text" @bind="p.Fieldname" class="form-control"
+                   placeholder="请输入字段名">
+
+        </div>
+        <div class="mb-3">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+        </div>
+         
+        <button type="submit" class="btn btn-primary">提交</button>
+ 
+
+</EditForm>
+ 
+
+</div>
+ 
+
+@code {
+
+    private Org_fieldDTO p = new Org_fieldDTO();
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (Id > 0)
+        {
+            p = await mService.GetSinger(Id);
+            if (p != null)
+            {
+                StateHasChanged();
+            }
+
+        }
+
+
+    }
+    private async Task SaveData()
+    {
+
+        var blnSave  = await mService.Save(p);
+        string info  = blnSave ? "保存成功" : "保存失败";       
+        await dlg.Alert(info, "提示", new AlertOptions() { OkButtonText = "确定" });
+        if (blnSave){ nv.NavigateTo("/OrgField/List"); };
+
+    }
+
+}

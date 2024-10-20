@@ -21,11 +21,10 @@
                       new SearchConditionDTO(){Name = "小于",Mark = "<"},
                       new SearchConditionDTO(){Name = "包含(in)",Mark = "in"},
                       new SearchConditionDTO(){Name = "含有(contains)",Mark = "contains"},
-                      new SearchConditionDTO(){Name = "不等于",Mark = "="},
-                      new SearchConditionDTO(){Name = "不大于",Mark = "!>"},
-                      new SearchConditionDTO(){Name = "不小于",Mark = "!<"},
-                       new SearchConditionDTO(){Name = "不包含",Mark = "not in"},
+                      new SearchConditionDTO(){Name = "不等于",Mark = "!="},
+                      //new SearchConditionDTO(){Name = "不包含",Mark = "Except"},
                       new SearchConditionDTO(){Name = "不含有",Mark = "not contains"}
+                     //new SearchConditionDTO(){Name = "长度等于",Mark = "length"}
                 };
 
             return lst;

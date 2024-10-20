@@ -126,6 +126,8 @@ namespace my_orange_easyxls.Service
             {
                 _context.OrgFile.Remove(project);
                 await _context.SaveChangesAsync();
+                //删除本地文件
+                _xlsFileService.DeleteFile(project.FileUrl);
                 return true;
             }
 
