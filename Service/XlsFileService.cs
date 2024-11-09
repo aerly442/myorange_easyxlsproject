@@ -284,7 +284,13 @@ namespace my_orange_easyxls.Service
   
         }
 
-    //读取xlsx文件获取工作簿名称和列明 
+    
+        /// <summary>
+        /// 读取xlsx文件获取工作簿名称和列名
+        /// 如果列名重复则加列数在后面
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
         public List<Org_fieldDTO> GetOrgFieldByFile(Org_fileDTO f){
             
             string path     = _hostEnvironment.WebRootPath;
@@ -310,11 +316,22 @@ namespace my_orange_easyxls.Service
                         continue;
                     }
 
+                    List<string> lstColName = new List<string>();
+
                     for (int col = 1; col <= worksheet.Dimension.Columns; col++)  
                     {  
 
                         var cell       = worksheet.Cells[1, col]; 
+                        //修正有重复列名导出数据的bug
+                        //2024-11-9
                         string colName = cell.Value.ToString(); //列名
+
+                        if (lstColName.IndexOf(colName) > -1)
+                        {
+                            colName = colName + col.ToString(); 
+                        }
+
+                        lstColName.Add(colName);
 
                         lstFile.Add(new Org_fieldDTO(){
 
